@@ -8,8 +8,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
-import javax.swing.JFrame;
-
 /**
  * Orchestrates the functionality of the DayPlanner project.
  * Lets users add and search through activities that are split into three
@@ -18,9 +16,6 @@ import javax.swing.JFrame;
  * @author Manpreet Singh
  */
 public class DayPlanner {
-
-	JFrame frame = new JFrame("Dayplanner");
-
 	// ArrayList holding all activities
 	private static ArrayList<Activity> activities = new ArrayList<>();
 
