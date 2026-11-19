@@ -30,19 +30,22 @@ public class MainWindow extends JFrame {
         setLayout(new BorderLayout());
 
         createMenu();
+        createInitialPanel();
+        createAddPanel();
+        createSearchPanel();
 
-        // Set up all panels
+        // Set up container panel
         container = new JPanel();
-        initialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 24, 80));
-        addPanel = new JPanel();
-        searchPanel = new JPanel();
 
-        addPanel.add(new JLabel("Adding new activity"));
-        addPanel.setVisible(false);
+        container.add(initialPanel, BorderLayout.CENTER);
         container.add(addPanel, BorderLayout.CENTER);
-        searchPanel.add(new JLabel("Searching for new activity"));
-        searchPanel.setVisible(false);
         container.add(searchPanel, BorderLayout.CENTER);
+
+        add(container);
+    }
+
+    private void createInitialPanel() {
+        initialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 24, 80));
 
         JTextArea instructions = new JTextArea(
                 "Welcome to DayPlanner.\n\nChoose a command from the “Commands” menu above for adding an activity, searching activities, or quitting the program.");
@@ -58,9 +61,18 @@ public class MainWindow extends JFrame {
         initialPanel.add(instructions);
 
         initialPanel.setVisible(true);
-        container.add(initialPanel);
+    }
 
-        add(container);
+    private void createAddPanel() {
+        addPanel = new JPanel();
+        addPanel.add(new JLabel("Adding new activity"));
+        addPanel.setVisible(false);
+    }
+
+    private void createSearchPanel() {
+        searchPanel = new JPanel();
+        searchPanel.add(new JLabel("Searching for new activity"));
+        searchPanel.setVisible(false);
     }
 
     private void createMenu() {
