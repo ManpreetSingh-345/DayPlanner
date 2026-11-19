@@ -1,6 +1,5 @@
 package dayplanner;
 
-import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -8,17 +7,18 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.border.Border;
-
 import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 
-import javax.swing.Box;
-
 public class MainWindow extends JFrame {
     public static final int WIDTH = 500;
     public static final int HEIGHT = 500;
+
+    private JPanel container; // Contains the current panel being shown
+    private JPanel initialPanel; // Initial panel displaying welcome message
+    private JPanel addPanel; // Add panel letting user add a new activity
+    private JPanel searchPanel; // Search panel letting user search for an activity
 
     public MainWindow() {
         super();
@@ -29,27 +29,21 @@ public class MainWindow extends JFrame {
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
 
-        // Add Menu bar to window containing all the commands
-        JMenu menu = new JMenu("Commands");
+        createMenu();
 
-        JMenuItem addChoice = new JMenuItem("Add new activity");
-        menu.add(addChoice);
+        // Set up all panels
+        container = new JPanel();
+        initialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 24, 80));
+        addPanel = new JPanel();
+        searchPanel = new JPanel();
 
-        JMenuItem searchChoice = new JMenuItem("Search for activity");
-        menu.add(searchChoice);
+        addPanel.add(new JLabel("Adding new activity"));
+        addPanel.setVisible(false);
+        container.add(addPanel, BorderLayout.CENTER);
+        searchPanel.add(new JLabel("Searching for new activity"));
+        searchPanel.setVisible(false);
+        container.add(searchPanel, BorderLayout.CENTER);
 
-        JMenuItem quitChoice = new JMenuItem("Quit program");
-        quitChoice.addActionListener(e -> {
-            System.exit(0);
-        });
-        menu.add(quitChoice);
-
-        JMenuBar bar = new JMenuBar();
-        bar.add(menu);
-        setJMenuBar(bar);
-
-        JPanel content = new JPanel(new FlowLayout(FlowLayout.LEFT, 24, 80));
-        // Add the welcome text
         JTextArea instructions = new JTextArea(
                 "Welcome to DayPlanner.\n\nChoose a command from the “Commands” menu above for adding an activity, searching activities, or quitting the program.");
 
@@ -61,8 +55,48 @@ public class MainWindow extends JFrame {
         instructions.setFocusable(false);
         instructions.setOpaque(false);
 
-        content.add(instructions);
-        add(content, BorderLayout.CENTER);
+        initialPanel.add(instructions);
+
+        initialPanel.setVisible(true);
+        container.add(initialPanel);
+
+        add(container);
+    }
+
+    private void createMenu() {
+        // Add Menu bar to window containing all the commands
+        // This will persist across all panels
+        JMenu menu = new JMenu("Commands");
+
+        // Add
+        JMenuItem addChoice = new JMenuItem("Add new activity");
+        addChoice.addActionListener(e -> {
+            initialPanel.setVisible(false);
+            addPanel.setVisible(true);
+            searchPanel.setVisible(false);
+        });
+        menu.add(addChoice);
+
+        // Search
+        JMenuItem searchChoice = new JMenuItem("Search for activity");
+        searchChoice.addActionListener(e -> {
+            initialPanel.setVisible(false);
+            addPanel.setVisible(false);
+            searchPanel.setVisible(true);
+        });
+        menu.add(searchChoice);
+
+        // Quit
+        JMenuItem quitChoice = new JMenuItem("Quit program");
+        quitChoice.addActionListener(e -> {
+            System.exit(0);
+        });
+        menu.add(quitChoice);
+
+        // Add menu bar to frame
+        JMenuBar bar = new JMenuBar();
+        bar.add(menu);
+        setJMenuBar(bar);
     }
 
     public static void main(String[] args) {
