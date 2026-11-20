@@ -10,8 +10,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 
 public class MainWindow extends JFrame {
@@ -44,7 +47,7 @@ public class MainWindow extends JFrame {
         container.add(addPanel, "add");
         container.add(searchPanel, "search");
 
-        add(container, BorderLayout.CENTER);
+        add(container);
     }
 
     private void createInitialPanel() {
@@ -66,19 +69,46 @@ public class MainWindow extends JFrame {
     }
 
     private void createAddPanel() {
-        addPanel = new JPanel(new GridLayout(2, 2, 50, 50));
+        addPanel = new JPanel(new BorderLayout());
+        JPanel addPanelGrid = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
 
         // Add activity section formatting
         JPanel addActivitySection = new JPanel();
-        addActivitySection.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         addActivitySection.add(new JLabel("Adding new activity"));
-        addPanel.add(addActivitySection);
+        addActivitySection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.75;
+        gbc.weighty = 0.75;
+        gbc.fill = GridBagConstraints.BOTH;
+        addPanelGrid.add(addActivitySection, gbc);
 
         // Add/reset button formatting
-        addPanel.add(new JLabel("Buttons"));
+        JPanel buttonSection = new JPanel();
+        buttonSection.add(new JLabel("Buttons"));
+        buttonSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.75;
+        gbc.fill = GridBagConstraints.BOTH;
+        addPanelGrid.add(buttonSection, gbc);
 
-        /// Messages formatting
-        addPanel.add(new JLabel("Messages"));
+        // Messages formatting
+        JPanel messagesSection = new JPanel();
+        messagesSection.add(new JLabel("Messages"));
+        messagesSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        gbc.weighty = 0.25;
+        gbc.fill = GridBagConstraints.BOTH;
+        addPanelGrid.add(messagesSection, gbc);
+
+        addPanel.add(addPanelGrid, BorderLayout.CENTER);
     }
 
     private void createSearchPanel() {
