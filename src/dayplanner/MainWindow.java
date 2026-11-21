@@ -14,7 +14,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
-
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
@@ -23,9 +22,7 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.awt.GridLayout;
 import java.awt.Insets;
-import java.util.concurrent.Flow;
 
 public class MainWindow extends JFrame {
     public static final int WIDTH = 500;
@@ -271,8 +268,188 @@ public class MainWindow extends JFrame {
     }
 
     private void createSearchPanel() {
-        searchPanel = new JPanel();
-        searchPanel.add(new JLabel("Searching for new activity"));
+        searchPanel = new JPanel(new BorderLayout());
+
+        // Instantiating grid layout
+        JPanel searchPanelGrid = new JPanel(new GridBagLayout());
+        GridBagConstraints gbc = new GridBagConstraints();
+
+        //// Search activity section
+        JPanel searchActivitySection = new JPanel();
+        searchActivitySection.setLayout(new BoxLayout(searchActivitySection, BoxLayout.Y_AXIS));
+        searchActivitySection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        /// Search activity title
+        JLabel searchActivityHeader = new JLabel("Searching activities: ");
+        searchActivityHeader.setBorder(BorderFactory.createEmptyBorder(5, 10, 15, 0));
+        searchActivitySection.add(searchActivityHeader);
+
+        // Inputs container
+        JPanel inputContainer = new JPanel();
+        inputContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        inputContainer.setLayout(new BoxLayout(inputContainer, BoxLayout.Y_AXIS));
+        inputContainer.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
+        inputContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+
+        /// Type input
+        JPanel searchActivityType = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        searchActivityType.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // ↓↓ Sets the maximum height of the searchActivityType panel to its preferred
+        // height, and let's it stretch as much as it wants to horizontally
+        searchActivityType.add(new JLabel("Type: "));
+        String[] typeOptions = { "home", "school", "other" };
+        JComboBox<String> typeDropdown = new JComboBox<>(typeOptions);
+        searchActivityType.add(typeDropdown);
+        searchActivityType
+                .setMaximumSize(new Dimension(Integer.MAX_VALUE, searchActivityType.getPreferredSize().height));
+        inputContainer.add(searchActivityType);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Title input
+        JPanel searchActivityTitle = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        searchActivityTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        searchActivityTitle.add(new JLabel("Title: "));
+        searchActivityTitle.add(new JTextField(20));
+        searchActivityTitle
+                .setMaximumSize(new Dimension(Integer.MAX_VALUE, searchActivityTitle.getPreferredSize().height));
+        inputContainer.add(searchActivityTitle);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Starting time input
+        JPanel searchActivityStartingTime = new JPanel();
+        searchActivityStartingTime.setLayout(new BoxLayout(searchActivityStartingTime, BoxLayout.Y_AXIS));
+        searchActivityStartingTime.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel startingTimeLabel = new JLabel("Starting time (year, month, day, hour, minute): ");
+        startingTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JTextField startingTimeInput = new JTextField(25);
+        startingTimeInput.setAlignmentX(Component.LEFT_ALIGNMENT);
+        startingTimeInput.setMaximumSize(
+                new Dimension(startingTimeInput.getPreferredSize().width, startingTimeInput.getPreferredSize().height));
+
+        searchActivityStartingTime.add(startingTimeLabel);
+        searchActivityStartingTime.add(startingTimeInput);
+
+        inputContainer.add(searchActivityStartingTime);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Ending time input
+        JPanel searchActivityEndingTime = new JPanel();
+        searchActivityEndingTime.setLayout(new BoxLayout(searchActivityEndingTime, BoxLayout.Y_AXIS));
+        searchActivityEndingTime.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel endingTimeLabel = new JLabel("Ending time (year, month, day, hour, minute): ");
+        endingTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JTextField endingTimeInput = new JTextField(25);
+        endingTimeInput.setAlignmentX(Component.LEFT_ALIGNMENT);
+        endingTimeInput.setMaximumSize(
+                new Dimension(endingTimeInput.getPreferredSize().width, endingTimeInput.getPreferredSize().height));
+
+        searchActivityEndingTime.add(endingTimeLabel);
+        searchActivityEndingTime.add(endingTimeInput);
+
+        inputContainer.add(searchActivityEndingTime);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Location input
+        JPanel searchActivityLocation = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        searchActivityLocation.setAlignmentX(Component.LEFT_ALIGNMENT);
+        searchActivityLocation.add(new JLabel("Location: "));
+        searchActivityLocation.add(new JTextField(20));
+        searchActivityLocation
+                .setMaximumSize(
+                        new Dimension(Integer.MAX_VALUE, searchActivityLocation.getPreferredSize().height));
+        searchActivityLocation.setVisible(false);
+        inputContainer.add(searchActivityLocation);
+
+        typeDropdown.addActionListener(e -> {
+            String selected = (String) typeDropdown.getSelectedItem();
+
+            if (selected.equals("other")) {
+                searchActivityLocation.setVisible(true);
+            } else {
+                searchActivityLocation.setVisible(false);
+            }
+        });
+
+        searchActivitySection.add(inputContainer);
+
+        // Grid bag constraints for 'search activity' section
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.weightx = 0.75;
+        gbc.weighty = 0.40;
+        gbc.fill = GridBagConstraints.BOTH;
+        searchPanelGrid.add(searchActivitySection, gbc);
+
+        //// Search/reset button section
+        JPanel buttonSection = new JPanel();
+        buttonSection.setLayout(new BoxLayout(buttonSection, BoxLayout.Y_AXIS));
+        buttonSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        // Buttons + Layouts
+        buttonSection.add(Box.createVerticalGlue()); // Creates space away from top of the screen
+
+        // Reset Button
+        JButton resetButton = new JButton("Reset");
+        resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonSection.add(resetButton);
+
+        // Create space between buttons
+        buttonSection.add(Box.createRigidArea(new Dimension(0, 50)));
+
+        // Search button
+        JButton searchButton = new JButton("Search");
+        searchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonSection.add(searchButton);
+
+        buttonSection.add(Box.createVerticalGlue()); // Creates space away from bottom of the screen
+
+        // Grid bag constraints for button section
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        gbc.weightx = 0.25;
+        gbc.weighty = 0.40;
+        gbc.fill = GridBagConstraints.BOTH;
+        searchPanelGrid.add(buttonSection, gbc);
+
+        //// Messages section
+        JPanel messagesSection = new JPanel(new BorderLayout(0, 5)); // 5px vertical gap between label and text area
+        messagesSection.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JLabel messagesLabel = new JLabel("Search results: ");
+        messagesSection.add(messagesLabel, BorderLayout.NORTH);
+
+        JTextArea messages = new JTextArea();
+        messages.setMargin(new Insets(10, 15, 10, 15));
+
+        JScrollPane messagesPane = new JScrollPane(messages);
+        messagesPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        messagesPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        messagesSection.add(messagesPane, BorderLayout.CENTER);
+
+        // Grid bag constraints for messages section
+        gbc.gridx = 0;
+        gbc.gridy = 1;
+        gbc.gridwidth = GridBagConstraints.REMAINDER;
+        gbc.gridheight = GridBagConstraints.REMAINDER;
+        gbc.weightx = 1;
+        gbc.weighty = 0.60;
+        gbc.fill = GridBagConstraints.BOTH;
+        searchPanelGrid.add(messagesSection, gbc);
+
+        // Add the grid layout to the wrapper panel
+        searchPanel.add(searchPanelGrid, BorderLayout.CENTER);
     }
 
     private void createMenu() {
