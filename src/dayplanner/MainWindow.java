@@ -179,6 +179,27 @@ public class MainWindow extends JFrame {
                 .setMaximumSize(new Dimension(Integer.MAX_VALUE, addActivityComment.getPreferredSize().height));
         inputContainer.add(addActivityComment);
 
+        /// Location input
+        JPanel addActivityLocation = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        addActivityLocation.setAlignmentX(Component.LEFT_ALIGNMENT);
+        addActivityLocation.add(new JLabel("Location: "));
+        addActivityLocation.add(new JTextField(20));
+        addActivityLocation
+                .setMaximumSize(
+                        new Dimension(Integer.MAX_VALUE, addActivityLocation.getPreferredSize().height));
+        addActivityLocation.setVisible(false);
+        inputContainer.add(addActivityLocation);
+
+        typeDropdown.addActionListener(e -> {
+            String selected = (String) typeDropdown.getSelectedItem();
+
+            if (selected.equals("other")) {
+                addActivityLocation.setVisible(true);
+            } else {
+                addActivityLocation.setVisible(false);
+            }
+        });
+
         addActivitySection.add(inputContainer);
 
         // Grid bag constraints for 'add activity' section
