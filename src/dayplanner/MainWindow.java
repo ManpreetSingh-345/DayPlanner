@@ -1,6 +1,10 @@
 package dayplanner;
 
 import javax.swing.BorderFactory;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -8,14 +12,18 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.JTextField;
+
 import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.util.concurrent.Flow;
 
 public class MainWindow extends JFrame {
     public static final int WIDTH = 500;
@@ -70,13 +78,106 @@ public class MainWindow extends JFrame {
 
     private void createAddPanel() {
         addPanel = new JPanel(new BorderLayout());
+
+        // Instantiating grid layout
         JPanel addPanelGrid = new JPanel(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
 
-        // Add activity section formatting
+        //// Add activity section
         JPanel addActivitySection = new JPanel();
-        addActivitySection.add(new JLabel("Adding new activity"));
+        addActivitySection.setLayout(new BoxLayout(addActivitySection, BoxLayout.Y_AXIS));
         addActivitySection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        /// Add activity title
+        JLabel addActivityHeader = new JLabel("Adding an activity: ");
+        addActivityHeader.setBorder(BorderFactory.createEmptyBorder(5, 10, 15, 0));
+        addActivitySection.add(addActivityHeader);
+
+        // Inputs container
+        JPanel inputContainer = new JPanel();
+        inputContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        inputContainer.setLayout(new BoxLayout(inputContainer, BoxLayout.Y_AXIS));
+        inputContainer.setBorder(BorderFactory.createEmptyBorder(0, 30, 0, 0));
+        inputContainer.setMaximumSize(new Dimension(Integer.MAX_VALUE, Integer.MAX_VALUE));
+
+        /// Type input
+        JPanel addActivityType = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        addActivityType.setAlignmentX(Component.LEFT_ALIGNMENT);
+        // ↓↓ Sets the maximum height of the addActivityType panel to its preferred
+        // height, and let's it stretch as much as it wants to horizontally
+        addActivityType.add(new JLabel("Type: "));
+        String[] typeOptions = { "home", "school", "other" };
+        JComboBox<String> typeDropdown = new JComboBox<>(typeOptions);
+        addActivityType.add(typeDropdown);
+        addActivityType.setMaximumSize(new Dimension(Integer.MAX_VALUE, addActivityType.getPreferredSize().height));
+        inputContainer.add(addActivityType);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Title input
+        JPanel addActivityTitle = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        addActivityTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
+        addActivityTitle.add(new JLabel("Title: "));
+        addActivityTitle.add(new JTextField(20));
+        addActivityTitle.setMaximumSize(new Dimension(Integer.MAX_VALUE, addActivityType.getPreferredSize().height));
+        inputContainer.add(addActivityTitle);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Starting time input
+        JPanel addActivityStartingTime = new JPanel();
+        addActivityStartingTime.setLayout(new BoxLayout(addActivityStartingTime, BoxLayout.Y_AXIS));
+        addActivityStartingTime.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel startingTimeLabel = new JLabel("Starting time (year, month, day, hour, minute): ");
+        startingTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JTextField startingTimeInput = new JTextField(20);
+        startingTimeInput.setAlignmentX(Component.LEFT_ALIGNMENT);
+        startingTimeInput.setMaximumSize(new Dimension(Integer.MAX_VALUE, startingTimeInput.getPreferredSize().height));
+
+        addActivityStartingTime.add(startingTimeLabel);
+        addActivityStartingTime.add(startingTimeInput);
+
+        inputContainer.add(addActivityStartingTime);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Ending time input
+        JPanel addActivityEndingTime = new JPanel();
+        addActivityEndingTime.setLayout(new BoxLayout(addActivityEndingTime, BoxLayout.Y_AXIS));
+        addActivityEndingTime.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JLabel endingTimeLabel = new JLabel("Ending time (year, month, day, hour, minute): ");
+        endingTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        JTextField endingTimeInput = new JTextField(20);
+        endingTimeInput.setAlignmentX(Component.LEFT_ALIGNMENT);
+        endingTimeInput.setMaximumSize(new Dimension(Integer.MAX_VALUE, endingTimeInput.getPreferredSize().height));
+
+        addActivityEndingTime.add(endingTimeLabel);
+        addActivityEndingTime.add(endingTimeInput);
+
+        inputContainer.add(addActivityEndingTime);
+
+        // Create space between input boxes
+        inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
+
+        /// Comment input
+        JPanel addActivityComment = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
+        addActivityComment.setAlignmentX(Component.LEFT_ALIGNMENT);
+        addActivityComment.add(new JLabel("Comment: "));
+        addActivityComment.add(new JTextField(20));
+        addActivityComment
+                .setMaximumSize(new Dimension(Integer.MAX_VALUE, addActivityComment.getPreferredSize().height));
+        inputContainer.add(addActivityComment);
+
+        addActivitySection.add(inputContainer);
+
+        // Grid bag constraints for 'add activity' section
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.75;
@@ -84,10 +185,30 @@ public class MainWindow extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(addActivitySection, gbc);
 
-        // Add/reset button formatting
+        //// Add/reset button section
         JPanel buttonSection = new JPanel();
-        buttonSection.add(new JLabel("Buttons"));
+        buttonSection.setLayout(new BoxLayout(buttonSection, BoxLayout.Y_AXIS));
         buttonSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        // Buttons + Layouts
+        buttonSection.add(Box.createVerticalGlue()); // Creates space away from top of the screen
+
+        // Reset Button
+        JButton resetButton = new JButton("Reset");
+        resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonSection.add(resetButton);
+
+        // Create space between buttons
+        buttonSection.add(Box.createRigidArea(new Dimension(0, 50)));
+
+        // Add button
+        JButton addButton = new JButton("Add");
+        addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonSection.add(addButton);
+
+        buttonSection.add(Box.createVerticalGlue()); // Creates space away from bottom of the screen
+
+        // Grid bag constraints for button section
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 0.25;
@@ -95,10 +216,12 @@ public class MainWindow extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(buttonSection, gbc);
 
-        // Messages formatting
+        //// Messages section
         JPanel messagesSection = new JPanel();
         messagesSection.add(new JLabel("Messages"));
         messagesSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        // Grid bag constraints for messages section
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = GridBagConstraints.REMAINDER;
@@ -108,6 +231,7 @@ public class MainWindow extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(messagesSection, gbc);
 
+        // Add the grid layout to the wrapper panel
         addPanel.add(addPanelGrid, BorderLayout.CENTER);
     }
 
