@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -23,6 +24,7 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
+import java.awt.Insets;
 import java.util.concurrent.Flow;
 
 public class MainWindow extends JFrame {
@@ -134,9 +136,10 @@ public class MainWindow extends JFrame {
         JLabel startingTimeLabel = new JLabel("Starting time (year, month, day, hour, minute): ");
         startingTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JTextField startingTimeInput = new JTextField(20);
+        JTextField startingTimeInput = new JTextField(25);
         startingTimeInput.setAlignmentX(Component.LEFT_ALIGNMENT);
-        startingTimeInput.setMaximumSize(new Dimension(Integer.MAX_VALUE, startingTimeInput.getPreferredSize().height));
+        startingTimeInput.setMaximumSize(
+                new Dimension(startingTimeInput.getPreferredSize().width, startingTimeInput.getPreferredSize().height));
 
         addActivityStartingTime.add(startingTimeLabel);
         addActivityStartingTime.add(startingTimeInput);
@@ -154,9 +157,10 @@ public class MainWindow extends JFrame {
         JLabel endingTimeLabel = new JLabel("Ending time (year, month, day, hour, minute): ");
         endingTimeLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        JTextField endingTimeInput = new JTextField(20);
+        JTextField endingTimeInput = new JTextField(25);
         endingTimeInput.setAlignmentX(Component.LEFT_ALIGNMENT);
-        endingTimeInput.setMaximumSize(new Dimension(Integer.MAX_VALUE, endingTimeInput.getPreferredSize().height));
+        endingTimeInput.setMaximumSize(
+                new Dimension(endingTimeInput.getPreferredSize().width, endingTimeInput.getPreferredSize().height));
 
         addActivityEndingTime.add(endingTimeLabel);
         addActivityEndingTime.add(endingTimeInput);
@@ -181,7 +185,7 @@ public class MainWindow extends JFrame {
         gbc.gridx = 0;
         gbc.gridy = 0;
         gbc.weightx = 0.75;
-        gbc.weighty = 0.75;
+        gbc.weighty = 0.40;
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(addActivitySection, gbc);
 
@@ -212,14 +216,24 @@ public class MainWindow extends JFrame {
         gbc.gridx = 1;
         gbc.gridy = 0;
         gbc.weightx = 0.25;
-        gbc.weighty = 0.75;
+        gbc.weighty = 0.40;
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(buttonSection, gbc);
 
         //// Messages section
-        JPanel messagesSection = new JPanel();
-        messagesSection.add(new JLabel("Messages"));
-        messagesSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+        JPanel messagesSection = new JPanel(new BorderLayout(0, 5)); // 5px vertical gap between label and text area
+        messagesSection.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+        JLabel messagesLabel = new JLabel("Messages: ");
+        messagesSection.add(messagesLabel, BorderLayout.NORTH);
+
+        JTextArea messages = new JTextArea();
+        messages.setMargin(new Insets(10, 15, 10, 15));
+
+        JScrollPane messagesPane = new JScrollPane(messages);
+        messagesPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+        messagesPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+        messagesSection.add(messagesPane, BorderLayout.CENTER);
 
         // Grid bag constraints for messages section
         gbc.gridx = 0;
@@ -227,7 +241,7 @@ public class MainWindow extends JFrame {
         gbc.gridwidth = GridBagConstraints.REMAINDER;
         gbc.gridheight = GridBagConstraints.REMAINDER;
         gbc.weightx = 1;
-        gbc.weighty = 0.25;
+        gbc.weighty = 0.60;
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(messagesSection, gbc);
 
