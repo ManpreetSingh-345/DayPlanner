@@ -35,6 +35,14 @@ public class Time {
      * @param otherTime The Time object to 'inherit' from
      */
     public Time(Time otherTime) {
+        if (otherTime == null) {
+            this.year = -1;
+            this.month = -1;
+            this.day = -1;
+            this.hour = -1;
+            this.minute = -1;
+            return;
+        }
         this.year = otherTime.year;
         this.month = otherTime.month;
         this.day = otherTime.day;
@@ -106,6 +114,8 @@ public class Time {
      *         false otherwise
      */
     public boolean equals(Time otherTime) {
+        if (otherTime == null)
+            return false;
         return this.year == otherTime.year && this.month == otherTime.month && this.day == otherTime.day
                 && this.hour == otherTime.hour && this.minute == otherTime.minute;
     }
@@ -118,6 +128,8 @@ public class Time {
      *         specified time
      */
     public int compareTo(Time otherTime) {
+        if (otherTime == null)
+            return 1;
         if (this.year != otherTime.year)
             return this.year - otherTime.year;
         if (this.month != otherTime.month)
@@ -136,6 +148,8 @@ public class Time {
      *         string. If the inputs aren't valid however, the method returns null.
      */
     public static Time getTimeFromString(String timeString) {
+        if (timeString == null)
+            return null;
         String[] timeArray = timeString.split(", ");
         if (timeArray.length != 5)
             return null;

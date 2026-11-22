@@ -14,7 +14,8 @@ public class SchoolActivity extends Activity {
      * @param endingTime   The ending time of the activity
      * @param comment      A short description of the activity
      */
-    public SchoolActivity(String title, Time startingTime, Time endingTime, String comment) {
+    public SchoolActivity(String title, Time startingTime, Time endingTime, String comment)
+            throws InvalidActivityException {
         super(title, startingTime, endingTime, comment);
     }
 

@@ -42,7 +42,7 @@ public class DayPlanner {
 	 * @param location     The location of the activity (if the activity is 'other')
 	 */
 	public void addNewActivity(String type, String title, Time startingTime, Time endingTime, String comment,
-			String location) {
+			String location) throws InvalidActivityException {
 		switch (type) {
 			case "home":
 				activities.add(new HomeActivity(title, startingTime,
@@ -203,17 +203,21 @@ public class DayPlanner {
 			// The format of each line in the file is '[attribute] = [content]'
 			// Hence I am accessing the item after '='
 			String type = getStoredValue(line);
-			String title = getStoredValue(reader.nextLine());
-			Time start = getStoredTime(getStoredValue(reader.nextLine()));
-			Time end = getStoredTime(getStoredValue(reader.nextLine()));
-			String comment = getStoredValue(reader.nextLine());
+			String title = getNextStoredValue(reader);
+			Time start = getStoredTime(getNextStoredValue(reader));
+			Time end = getStoredTime(getNextStoredValue(reader));
+			String comment = getNextStoredValue(reader);
 
 			String location = "";
 			if (type.equals("other")) {
-				location = getStoredValue(reader.nextLine());
+				location = getNextStoredValue(reader);
 			}
 
-			addNewActivity(type, title, start, end, comment, location);
+			try {
+				addNewActivity(type, title, start, end, comment, location);
+			} catch (InvalidActivityException exception) {
+				System.out.println("Error loading activity: " + exception.getMessage());
+			}
 
 			if (reader.hasNextLine()) {
 				reader.nextLine();
@@ -230,7 +234,17 @@ public class DayPlanner {
 	 * @return the field value without surrounding apostrophes
 	 */
 	private static String getStoredValue(String line) {
+		if (line == null || !line.contains("=")) {
+			return "";
+		}
 		return line.substring(line.indexOf('=') + 1).replace("'", "").trim();
+	}
+
+	private static String getNextStoredValue(Scanner reader) {
+		if (!reader.hasNextLine()) {
+			return "";
+		}
+		return getStoredValue(reader.nextLine());
 	}
 
 	/**
@@ -240,10 +254,20 @@ public class DayPlanner {
 	 * @return the parsed time
 	 */
 	private static Time getStoredTime(String timeString) {
-		String[] dateAndTime = timeString.split("[/,]");
-		String[] clock = dateAndTime[3].split(":");
-		return new Time(Integer.parseInt(dateAndTime[0]), Integer.parseInt(dateAndTime[1]),
-				Integer.parseInt(dateAndTime[2]), Integer.parseInt(clock[0]),
-				Integer.parseInt(clock[1]));
+		if (timeString == null)
+			return null;
+		try {
+			String[] dateAndTime = timeString.split("[/,]");
+			if (dateAndTime.length != 4)
+				return null;
+			String[] clock = dateAndTime[3].split(":");
+			if (clock.length != 2)
+				return null;
+			return new Time(Integer.parseInt(dateAndTime[0]), Integer.parseInt(dateAndTime[1]),
+					Integer.parseInt(dateAndTime[2]), Integer.parseInt(clock[0]),
+					Integer.parseInt(clock[1]));
+		} catch (NumberFormatException exception) {
+			return null;
+		}
 	}
 }

@@ -20,9 +20,9 @@ public class OtherActivity extends Activity {
      * @param location     The location of the activity
      */
     public OtherActivity(String title, Time startingTime, Time endingTime, String comment,
-            String location) {
+            String location) throws InvalidActivityException {
         super(title, startingTime, endingTime, comment);
-        this.location = location;
+        setLocation(location);
     }
 
     public OtherActivity() {
@@ -31,10 +31,13 @@ public class OtherActivity extends Activity {
     }
 
     public String getLocation() {
-        return new String(this.location);
+        return this.location == null ? "" : new String(this.location);
     }
 
-    public void setLocation(String location) {
+    public void setLocation(String location) throws InvalidActivityException {
+        if (location == null || location.isBlank()) {
+            throw new InvalidActivityException("Location cannot be empty.");
+        }
         this.location = location;
     }
 

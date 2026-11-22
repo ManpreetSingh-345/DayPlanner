@@ -5,7 +5,7 @@ package dayplanner;
  * 
  * @author Manpreet Singh
  */
-public class Activity {
+public abstract class Activity {
     private String title;
     private Time startingTime;
     private Time endingTime;
@@ -18,22 +18,22 @@ public class Activity {
      * @param endingTime   The ending time of the activity
      * @param comment      A short description of the activity
      */
-    public Activity(String title, Time startingTime, Time endingTime, String comment) {
-        this.title = title;
-        this.startingTime = startingTime;
-        this.endingTime = endingTime;
-        this.comment = comment;
+    public Activity(String title, Time startingTime, Time endingTime, String comment) throws InvalidActivityException {
+        setTitle(title);
+        setStartingTime(startingTime);
+        setEndingTime(endingTime);
+        setComment(comment);
     }
 
     public Activity() {
-        this.title = null;
+        this.title = "";
         this.startingTime = null;
         this.endingTime = null;
-        this.comment = null;
+        this.comment = "";
     }
 
     public String getTitle() {
-        return new String(this.title);
+        return this.title == null ? "" : new String(this.title);
     }
 
     public Time getStartingTime() {
@@ -45,23 +45,32 @@ public class Activity {
     }
 
     public String getComment() {
-        return new String(this.comment);
+        return this.comment == null ? "" : new String(this.comment);
     }
 
-    public void setTitle(String title) {
+    public void setTitle(String title) throws InvalidActivityException {
+        if (title == null || title.isBlank()) {
+            throw new InvalidActivityException("Title cannot be blank.");
+        }
         this.title = title;
     }
 
-    public void setStartingTime(Time time) {
+    public void setStartingTime(Time time) throws InvalidActivityException {
+        if (time == null) {
+            throw new InvalidActivityException("Starting time cannot be empty.");
+        }
         this.startingTime = time;
     }
 
-    public void setEndingTime(Time time) {
+    public void setEndingTime(Time time) throws InvalidActivityException {
+        if (time == null) {
+            throw new InvalidActivityException("Ending time cannot be empty.");
+        }
         this.endingTime = time;
     }
 
     public void setComment(String comment) {
-        this.comment = comment;
+        this.comment = comment == null ? "" : comment;
     }
 
     /**

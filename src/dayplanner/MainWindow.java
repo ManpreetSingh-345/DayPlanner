@@ -280,9 +280,10 @@ public class MainWindow extends JFrame {
                     // Time conditions
                     boolean emptyStartingTime = startingTime == null;
                     boolean emptyEndingTime = endingTime == null;
-                    boolean invalidStartingTime = !startingTime.isValid();
-                    boolean invalidEndingTime = !endingTime.isValid();
-                    boolean startingTimeAfterEndingTime = endingTime.compareTo(startingTime) <= 0;
+                    boolean invalidStartingTime = startingTime != null && !startingTime.isValid();
+                    boolean invalidEndingTime = endingTime != null && !endingTime.isValid();
+                    boolean startingTimeAfterEndingTime = startingTime != null && endingTime != null
+                            && endingTime.compareTo(startingTime) <= 0;
                     if (titleInput.getText().isBlank()) {
                         messages.append("Error: title is missing. Try again.\n");
                     } else if (emptyStartingTime) {
@@ -305,7 +306,11 @@ public class MainWindow extends JFrame {
                         String title = titleInput.getText();
                         String comment = commentInput.getText();
                         String location = locationInput.getText();
-                        dayplanner.addNewActivity(type, title, startingTime, endingTime, comment, location);
+                        try {
+                            dayplanner.addNewActivity(type, title, startingTime, endingTime, comment, location);
+                        } catch (InvalidActivityException exception) {
+                            messages.append("Error: " + exception.getMessage() + "\n");
+                        }
                     }
                 });
             }
