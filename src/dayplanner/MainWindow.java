@@ -56,6 +56,8 @@ public class MainWindow extends JFrame {
 
     /**
      * Creates and initializes the main DayPlanner window.
+     * 
+     * @param fileName name of file to read from
      */
     public MainWindow(String fileName) {
         super();
