@@ -17,244 +17,18 @@ import java.util.Scanner;
  */
 public class DayPlanner {
 	// ArrayList holding all activities
-	private static ArrayList<Activity> activities = new ArrayList<>();
+	private ArrayList<Activity> activities;
 
 	// HashMap containing tokenized title keywords for fast searching
-	private static HashMap<String, ArrayList<Integer>> titleHashMap = new HashMap<>();
+	private HashMap<String, ArrayList<Integer>> titleHashMap;
 
-	/**
-	 * The main method of the DayPlanner class. Orchestrates the logic of the
-	 * program.
-	 * 
-	 * @param args Arguments provided in command line (not used)
-	 */
-	public static void main(String[] args) {
-		Scanner scanner = new Scanner(System.in);
-		System.out.println("Welcome to the Day Planner Program");
-		boolean flag = true;
-
-		if (args.length > 0) {
-			readFromFile(args[0]);
-		}
-
-		while (flag) {
-			prompt();
-			// Normalize choice input by lowercasing for more robust input handling
-			String choice = scanner.nextLine().toLowerCase().trim();
-			switch (choice) {
-				// Adding a new activity
-				case "add", "a", "1":
-					System.out.println("----------------------------------");
-					// Get user input
-					System.out.println("Adding a new activity");
-
-					System.out.print("Enter type of activity (home, school, or other): ");
-					String activityType = scanner.nextLine().toLowerCase();
-
-					// Prompts user for activity type if left blank or user inputted an invalid type
-					while ((!activityType.equals("home") && !activityType.equals("school")
-							&& !activityType.equals("other"))) {
-						System.out.println(
-								"Invalid/empty activity type. Please select either home, school, or other.");
-						System.out.print("Enter type of activity (home, school, or other): ");
-						activityType = scanner.nextLine().toLowerCase();
-					}
-
-					System.out.print("Enter title: ");
-					String activityTitle = scanner.nextLine();
-
-					// Prompts user for the title again if left blank
-					while (activityTitle.isBlank()) {
-						System.out.println("Blank title. Please enter a title.");
-						System.out.print("Enter title: ");
-						activityTitle = scanner.nextLine();
-					}
-
-					System.out.print(
-							"Enter starting time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-					Time activityStartingTime = Time.getTimeFromString(scanner.nextLine());
-
-					// Prompts user for the starting time if left blank or isn't valid
-					while (activityStartingTime == null || !activityStartingTime.isValid()) {
-						System.out.println(
-								"Invalid time parameters. Make sure the parameters are integer values, year is positive, the month is between 1-12, the day is between 1-31, the hour is between 0-23, and the minute is between 0-59.");
-						System.out
-								.println(
-										"In addition, as per the Gregorian Calendar, make sure it is a valid leap year if trying to set February 29.");
-						System.out.print(
-								"Enter starting time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-						activityStartingTime = Time.getTimeFromString(scanner.nextLine());
-					}
-
-					System.out.print(
-							"Enter ending time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-					Time activityEndingTime = Time.getTimeFromString(scanner.nextLine());
-
-					// Prompts user for the starting time if left blank or isn't valid
-					while (activityEndingTime == null || !activityEndingTime.isValid()) {
-						System.out.println(
-								"Invalid time parameters. Make sure the parameters are integer values, year is positive, the month is between 1-12, the day is between 1-31, the hour is between 0-23, and the minute is between 0-59.");
-						System.out
-								.println(
-										"In addition, make sure it is a valid leap year if trying to set February 29.");
-						System.out.print(
-								"Enter starting time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-						activityEndingTime = Time.getTimeFromString(scanner.nextLine());
-					}
-
-					// If the ending time is earlier than or equal to the starting time, print error
-					if (activityEndingTime.compareTo(activityStartingTime) <= 0) {
-						System.out.println(
-								"Invalid timings. The ending time should be after the starting time.");
-						break;
-					}
-
-					System.out.print("Enter comment (optional): ");
-					String activityComment = scanner.nextLine();
-
-					String activityLocation = "";
-
-					// Only ask for the location if the activity type the user inputted is 'other'
-					if (activityType.equals("other")) {
-						System.out.print("Enter the location of the activity: ");
-						activityLocation = scanner.nextLine();
-
-						while (activityLocation.isBlank()) {
-							System.out.println("Blank location. Please enter a location");
-							System.out.print("Enter the location of the activity: ");
-							activityLocation = scanner.nextLine();
-						}
-					}
-
-					addNewActivity(activityType, activityTitle, activityStartingTime,
-							activityEndingTime,
-							activityComment, activityLocation);
-
-					// Uppercase first letter of activity type string before printing to the console
-					System.out.println("%s Activity Added Successfully."
-							.formatted(activityType.substring(0, 1).toUpperCase()
-									+ activityType.substring(1)));
-					break;
-
-				// Searching for activities
-				case "search", "s", "2":
-					System.out.println("----------------------------------");
-					System.out.println("Searching for an activity");
-
-					System.out.print("Enter type of activity (home, school, or other): ");
-					String searchActivityType = scanner.nextLine().toLowerCase();
-
-					// Prompts user for activity type if invalid (i.e. not left blank and doesn't
-					// belong to one of the three activity types)
-					while (!searchActivityType.equals("home")
-							&& !searchActivityType.equals("school")
-							&& !searchActivityType.equals("other")
-							&& !searchActivityType.isBlank()) {
-						System.out.println(
-								"Invalid activity type. Please select either home, school, other, or a blank input.");
-						System.out.print("Enter type of activity (home, school, or other): ");
-						searchActivityType = scanner.nextLine().toLowerCase();
-					}
-
-					System.out.print("Enter keywords from title to search for: ");
-					String searchKeywords = scanner.nextLine();
-					System.out.print(
-							"Enter starting time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-					String startingTimeString = scanner.nextLine();
-					Time startingTime = !startingTimeString.isBlank()
-							? Time.getTimeFromString(startingTimeString)
-							: null;
-
-					// Prompts user for starting time again if the input isn't blank and is invalid
-					if (!startingTimeString.isBlank()) {
-						while (startingTime == null || !startingTime.isValid()) {
-							System.out.println(
-									"Invalid time parameters. Make sure the parameters are integer values, year is positive, the month is between 1-12, the day is between 1-31, the hour is between 0-23, and the minute is between 0-59.");
-							System.out
-									.println(
-											"In addition, as per the Gregorian Calendar, make sure it is a valid leap year if trying to set February 29.");
-							System.out.print(
-									"Enter starting time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-							startingTimeString = scanner.nextLine();
-							startingTime = !startingTimeString.isBlank()
-									? Time.getTimeFromString(startingTimeString)
-									: null;
-						}
-					}
-
-					System.out.print(
-							"Enter ending time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-					String endingTimeString = scanner.nextLine();
-					Time endingTime = !endingTimeString.isBlank()
-							? Time.getTimeFromString(endingTimeString)
-							: null;
-
-					// Prompts user for starting time again if the input isn't blank and is invalid
-					if (!endingTimeString.isBlank()) {
-						while (endingTime == null || !endingTime.isValid()) {
-							System.out.println(
-									"Invalid time parameters. Make sure the parameters are integer values, year is positive, the month is between 1-12, the day is between 1-31, the hour is between 0-23, and the minute is between 0-59.");
-							System.out.println(
-									"In addition, as per the Gregorian Calendar, make sure it is a valid leap year if trying to set February 29.");
-							System.out.print(
-									"Enter ending time (Format your response as: '[year] [month] [day] [hour] [minute]'): ");
-							endingTimeString = scanner.nextLine();
-							endingTime = !endingTimeString.isBlank()
-									? Time.getTimeFromString(endingTimeString)
-									: null;
-						}
-					}
-
-					// If the ending time is earlier than or equal to the starting time, print error
-					if ((startingTime != null && endingTime != null)
-							&& startingTime.compareTo(endingTime) >= 0) {
-						System.out.println(
-								"Invalid timings. The ending time should be after the starting time.");
-						break;
-					}
-
-					System.out.println("----------------------------------");
-					System.out.println("Results based on search restrictions:");
-					printActivitiesBasedOnRestrictions(searchActivityType, searchKeywords,
-							startingTime,
-							endingTime);
-					break;
-
-				// Quit program
-				case "quit", "q", "3":
-					System.out.println("----------------------------------");
-					flag = false;
-					System.out.println("Quitting program.");
-					break;
-
-				// If no match occurs above, ask user to input again
-				default:
-					System.out.println("----------------------------------");
-					System.out.println(
-							"Invalid input. Please select one of the options below by typing the option out (i.e. for adding a new activity, type 'add'), or by typing the number corresponding to the activity.");
-			}
-		}
-
-		if (args.length > 0) {
-			writeToFile(args[0]);
-		} else {
-			writeToFile("output.txt");
-		}
-		scanner.close();
-		return;
-
+	public DayPlanner() {
+		this.activities = new ArrayList<>();
+		this.titleHashMap = new HashMap<>();
 	}
 
-	/**
-	 * Displays the available actions in the main menu.
-	 */
-	static void prompt() {
-		System.out.println("----------------------------------");
-		System.out.println("(1) Add a new activity");
-		System.out.println("(2) Search for an activity");
-		System.out.println("(3) Terminate the program");
-		System.out.print(
-				"Please select an option to execute from the ones above ('add', 'search', or 'quit'): ");
+	public ArrayList<Activity> getActivities() {
+		return new ArrayList<Activity>(activities);
 	}
 
 	/**
@@ -267,7 +41,7 @@ public class DayPlanner {
 	 * @param comment      A short description of the activity
 	 * @param location     The location of the activity (if the activity is 'other')
 	 */
-	static void addNewActivity(String type, String title, Time startingTime, Time endingTime, String comment,
+	public void addNewActivity(String type, String title, Time startingTime, Time endingTime, String comment,
 			String location) {
 		switch (type) {
 			case "home":
@@ -306,8 +80,10 @@ public class DayPlanner {
 	 * @param startingTime  If given, the starting time of the range
 	 * @param endingTime    If given, the ending time of the range
 	 */
-	static void printActivitiesBasedOnRestrictions(String type, String titleKeywords, Time startingTime,
+	public ArrayList<Activity> getActivitiesBasedOnRestrictions(String type, String titleKeywords, Time startingTime,
 			Time endingTime) {
+
+		ArrayList<Activity> restrictedActivities = new ArrayList<>();
 		// If the title keywords are included in the search, use the title keywords
 		// hashmap
 		if (!titleKeywords.isBlank()) {
@@ -324,7 +100,7 @@ public class DayPlanner {
 
 			// If all the keywords aren't in any activity title, return
 			if (titleListIndices.size() != titleKeywords.trim().split("\\s+").length) {
-				return;
+				return null;
 			}
 
 			if (titleListIndices.size() > 0) {
@@ -344,7 +120,7 @@ public class DayPlanner {
 							|| (type.equals("other") && activities.get(index) instanceof OtherActivity)
 							|| type.isBlank())
 							&& activities.get(index).fitsTimeCondition(startingTime, endingTime)) {
-						System.out.println(activities.get(index));
+						restrictedActivities.add(activities.get(index));
 					}
 				}
 			}
@@ -358,17 +134,19 @@ public class DayPlanner {
 						|| (type.equals("other") && activities.get(i) instanceof OtherActivity)
 						|| type.isBlank())
 						&& activities.get(i).fitsTimeCondition(startingTime, endingTime)) {
-					System.out.println(activities.get(i));
+					restrictedActivities.add(activities.get(i));
 				}
 			}
 		}
+
+		return restrictedActivities;
 	}
 
 	/**
 	 * Writes all activities to the output file using the planner's activity
 	 * format.
 	 */
-	private static void writeToFile(String fileName) {
+	public void writeToFile(String fileName) {
 		PrintWriter writer = null;
 
 		// Instantiate the writer object using a try/catch block
@@ -406,7 +184,7 @@ public class DayPlanner {
 	 *
 	 * @param fileName the name of the file containing the saved activities
 	 */
-	private static void readFromFile(String fileName) {
+	public void readFromFile(String fileName) {
 		Scanner reader = null;
 
 		try {
