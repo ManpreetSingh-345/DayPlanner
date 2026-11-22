@@ -57,9 +57,11 @@ public class MainWindow extends JFrame {
     /**
      * Creates and initializes the main DayPlanner window.
      */
-    public MainWindow() {
+    public MainWindow(String fileName) {
         super();
-        dayplanner.readFromFile("output.txt");
+        if (!fileName.isBlank()) {
+            dayplanner.readFromFile(fileName);
+        }
         // Add base properties to window
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -71,6 +73,9 @@ public class MainWindow extends JFrame {
             @Override
             public void windowClosing(WindowEvent e) {
                 System.out.println("Saving to output.txt...");
+                if (!fileName.isBlank()) {
+                    dayplanner.writeToFile(fileName);
+                }
                 dayplanner.writeToFile("output.txt");
             }
         });
@@ -634,7 +639,12 @@ public class MainWindow extends JFrame {
      * @param args command-line arguments
      */
     public static void main(String[] args) {
-        MainWindow window = new MainWindow();
-        window.setVisible(true);
+        if (args.length > 0) {
+            MainWindow window = new MainWindow(args[0]);
+            window.setVisible(true);
+        } else {
+            MainWindow window = new MainWindow("");
+            window.setVisible(true);
+        }
     }
 }

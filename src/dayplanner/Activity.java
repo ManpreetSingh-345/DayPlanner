@@ -19,6 +19,7 @@ public abstract class Activity {
      * @param startingTime The starting time of the activity
      * @param endingTime   The ending time of the activity
      * @param comment      A short description of the activity
+     * 
      * @throws InvalidActivityException if a required field is invalid
      */
     public Activity(String title, Time startingTime, Time endingTime, String comment) throws InvalidActivityException {
@@ -32,6 +33,7 @@ public abstract class Activity {
      * Creates a copy of an activity.
      *
      * @param otherActivity the activity to copy
+     * 
      * @throws InvalidActivityException if the source has invalid fields
      */
     public Activity(Activity otherActivity) throws InvalidActivityException {
@@ -94,6 +96,7 @@ public abstract class Activity {
      * Stores a validated activity title.
      *
      * @param title the title to store
+     * 
      * @throws InvalidActivityException if the title is blank or null
      */
     public void setTitle(String title) throws InvalidActivityException {
@@ -107,6 +110,7 @@ public abstract class Activity {
      * Stores a validated starting time.
      *
      * @param time the starting time to store
+     * 
      * @throws InvalidActivityException if the starting time is null
      */
     public void setStartingTime(Time time) throws InvalidActivityException {
@@ -120,6 +124,7 @@ public abstract class Activity {
      * Stores a validated ending time.
      *
      * @param time the ending time to store
+     * 
      * @throws InvalidActivityException if the ending time is null
      */
     public void setEndingTime(Time time) throws InvalidActivityException {
@@ -155,6 +160,7 @@ public abstract class Activity {
      * Searches the activity title for every supplied keyword.
      *
      * @param keywords keywords to search for in the activity title
+     * 
      * @return true if the title contains all the keywords, false otherwise
      */
     public boolean titleContainsKeywords(String keywords) {
