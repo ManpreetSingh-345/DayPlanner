@@ -4,7 +4,7 @@ package dayplanner;
  * Represents a specific time including year, month, day, hour, and minute
  * Used to define starting and ending times for activities.
  */
-public class Time {
+public class Time implements Comparable<Time> {
     private int year;
     private int month;
     private int day;
@@ -50,6 +50,9 @@ public class Time {
         this.minute = otherTime.minute;
     }
 
+    /**
+     * Creates a Time with sentinel values that represent an unset time.
+     */
     public Time() {
         this.year = -1;
         this.month = -1;
@@ -58,48 +61,98 @@ public class Time {
         this.minute = -1;
     }
 
+    /**
+     * Returns the stored year.
+     *
+     * @return the stored year
+     */
     public int getYear() {
         return this.year;
     }
 
+    /**
+     * Returns the stored month.
+     *
+     * @return the stored month
+     */
     public int getMonth() {
         return this.month;
     }
 
+    /**
+     * Returns the stored day.
+     *
+     * @return the stored day
+     */
     public int getDay() {
         return this.day;
     }
 
+    /**
+     * Returns the stored hour.
+     *
+     * @return the stored hour
+     */
     public int getHour() {
         return this.hour;
     }
 
+    /**
+     * Returns the stored minute.
+     *
+     * @return the stored minute
+     */
     public int getMinute() {
         return this.minute;
     }
 
+    /**
+     * Stores the year.
+     *
+     * @param year the year to store
+     */
     public void setYear(int year) {
         this.year = year;
     }
 
+    /**
+     * Stores the month.
+     *
+     * @param month the month to store
+     */
     public void setMonth(int month) {
         this.month = month;
     }
 
+    /**
+     * Stores the day.
+     *
+     * @param day the day to store
+     */
     public void setDay(int day) {
         this.day = day;
     }
 
+    /**
+     * Stores the hour.
+     *
+     * @param hour the hour to store
+     */
     public void setHour(int hour) {
         this.hour = hour;
     }
 
+    /**
+     * Stores the minute.
+     *
+     * @param minute the minute to store
+     */
     public void setMinute(int minute) {
         this.minute = minute;
     }
 
     /**
-     * (non-Javadoc)
+     * @return a string representing the time in the format "YYYY/MM/DD,HH:MM"
      * 
      * @see java.lang.Object#toString()
      */
@@ -109,6 +162,8 @@ public class Time {
 
     /**
      * 
+     * Tests whether two Time objects contain the same values.
+     *
      * @param otherTime The Time object to compare against
      * @return true if the calling object is equivalent to the specified object,
      *         false otherwise
@@ -123,29 +178,43 @@ public class Time {
     /**
      * 
      * @param otherTime The Time object to compare against
+     * 
      * @return A negative integer if this time is earlier than the specified time,
      *         zero if they're equal, and postiive if this time is later than the
      *         specified time
      */
-    public int compareTo(Time otherTime) {
-        if (otherTime == null)
-            return 1;
-        if (this.year != otherTime.year)
+    @Override
+    public int compareTo(Time otherTime) throws NullPointerException, ClassCastException {
+        if (otherTime == null) {
+            throw new NullPointerException("Other time cannot be null.");
+        }
+        if (this.getClass() != otherTime.getClass()) {
+            throw new ClassCastException("Time objects must be the same class");
+        }
+
+        if (this.year != otherTime.year) {
             return this.year - otherTime.year;
-        if (this.month != otherTime.month)
+        }
+        if (this.month != otherTime.month) {
             return this.month - otherTime.month;
-        if (this.day != otherTime.day)
+        }
+        if (this.day != otherTime.day) {
             return this.day - otherTime.day;
-        if (this.hour != otherTime.hour)
+        }
+        if (this.hour != otherTime.hour) {
             return this.hour - otherTime.hour;
+        }
         return this.minute - otherTime.minute;
     }
 
     /**
      * 
+     * Parses a comma-separated five-part time string.
+     *
      * @param timeString A string to convert to the Time object
+     * 
      * @return A Time object containing the attributes specified within the Time
-     *         string. If the inputs aren't valid however, the method returns null.
+     *         string. If the inputs aren't valid, the method returns null.
      */
     public static Time getTimeFromString(String timeString) {
         if (timeString == null)
@@ -167,6 +236,8 @@ public class Time {
 
     /**
      * 
+     * Determines whether this time follows the Gregorian calendar rules.
+     *
      * @return true if this Time object is valid, which means it falls under the
      *         Gregorian Calendar, false otherwise
      */

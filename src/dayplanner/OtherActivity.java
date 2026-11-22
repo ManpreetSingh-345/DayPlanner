@@ -13,11 +13,15 @@ public class OtherActivity extends Activity {
     /**
      * Creates a new instance of the OtherActivity object
      * 
+     * Creates an other-type activity with the supplied field values.
+     *
      * @param title        The title of the activity
      * @param startingTime The starting time of the activity
      * @param endingTime   The ending time of the activity
      * @param comment      A short description of the activity
      * @param location     The location of the activity
+     * 
+     * @throws InvalidActivityException if an activity field is invalid
      */
     public OtherActivity(String title, Time startingTime, Time endingTime, String comment,
             String location) throws InvalidActivityException {
@@ -25,15 +29,42 @@ public class OtherActivity extends Activity {
         setLocation(location);
     }
 
+    /**
+     * Creates a copy of an other-type activity.
+     *
+     * @param otherOtherActivity the activity to copy
+     * 
+     * @throws InvalidActivityException if copied fields are invalid
+     */
+    public OtherActivity(OtherActivity otherOtherActivity) throws InvalidActivityException {
+        super(otherOtherActivity);
+        setLocation(otherOtherActivity.location);
+    }
+
+    /**
+     * Creates an other-type activity with default field values.
+     */
     public OtherActivity() {
         super();
         this.location = null;
     }
 
+    /**
+     * Returns a copy of the activity location.
+     *
+     * @return a copy of the activity location
+     */
     public String getLocation() {
         return this.location == null ? "" : new String(this.location);
     }
 
+    /**
+     * Stores a validated activity location.
+     *
+     * @param location the location to store
+     * 
+     * @throws InvalidActivityException if the location is blank or null
+     */
     public void setLocation(String location) throws InvalidActivityException {
         if (location == null || location.isBlank()) {
             throw new InvalidActivityException("Location cannot be empty.");
@@ -42,9 +73,9 @@ public class OtherActivity extends Activity {
     }
 
     /**
-     * (non-Javadoc)
+     * @return a string representing this other-type activity
      * 
-     * @see src.dayplanner.Activity#toString()
+     * @see java.lang.Object#toString()
      */
     public String toString() {
         if (this.getComment().isBlank()) {
@@ -55,6 +86,11 @@ public class OtherActivity extends Activity {
                 this.getEndingTime().toString(), this.getComment(), this.getLocation());
     }
 
+    /**
+     * @param other the object to compare
+     * 
+     * @return true if the objects represent the same other-type activity
+     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {

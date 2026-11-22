@@ -27,17 +27,36 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.util.ArrayList;
 
+/**
+ * Provides the Swing GUI for DayPlanner.
+ *
+ * @author Manpreet Singh
+ */
 public class MainWindow extends JFrame {
+    /** The window width in pixels. */
     public static final int WIDTH = 500;
+
+    /** The window height in pixels. */
     public static final int HEIGHT = 500;
 
-    private JPanel container; // Contains the panels managed by CardLayout
-    private JPanel initialPanel; // Initial panel displaying welcome message
-    private JPanel addPanel; // Add panel letting user add a new activity
-    private JPanel searchPanel; // Search panel letting user search for an activity
+    /** Contains the panels managed by CardLayout. */
+    private JPanel container;
 
+    /** Displays the welcome message. */
+    private JPanel initialPanel;
+
+    /** Provides controls for adding activities. */
+    private JPanel addPanel;
+
+    /** Provides controls for searching activities. */
+    private JPanel searchPanel;
+
+    /** Stores and manages the application's activities. */
     DayPlanner dayplanner = new DayPlanner();
 
+    /**
+     * Creates and initializes the main DayPlanner window.
+     */
     public MainWindow() {
         super();
         dayplanner.readFromFile("output.txt");
@@ -71,6 +90,9 @@ public class MainWindow extends JFrame {
         add(container);
     }
 
+    /**
+     * Creates the initial panel when the application starts.
+     */
     private void createInitialPanel() {
         initialPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 24, 80));
 
@@ -89,6 +111,9 @@ public class MainWindow extends JFrame {
 
     }
 
+    /**
+     * Creates the 'add' section for creating and adding new activities
+     */
     private void createAddPanel() {
         addPanel = new JPanel(new BorderLayout());
 
@@ -320,6 +345,9 @@ public class MainWindow extends JFrame {
         addPanel.add(addPanelGrid, BorderLayout.CENTER);
     }
 
+    /**
+     * Creates the 'search' panel for searching stored activities.
+     */
     private void createSearchPanel() {
         searchPanel = new JPanel(new BorderLayout());
 
@@ -519,6 +547,9 @@ public class MainWindow extends JFrame {
         searchPanel.add(searchPanelGrid, BorderLayout.CENTER);
     }
 
+    /**
+     * Creates the commands menu for switching panels and quitting.
+     */
     private void createMenu() {
         // Add Menu bar to window containing all the commands
         // This will persist across all panels
@@ -551,11 +582,23 @@ public class MainWindow extends JFrame {
         setJMenuBar(bar);
     }
 
+    /**
+     * Displays one of the application's named panels via the CardLayout manager.
+     *
+     * @param panelName the panel name to display
+     */
     private void showPanel(String panelName) {
         CardLayout layout = (CardLayout) container.getLayout();
         layout.show(container, panelName);
     }
 
+    /**
+     * Creates a vertically arranged reset and action button section.
+     *
+     * @param action the text and name for the action button
+     * 
+     * @return the configured button section
+     */
     private JPanel createButtonSection(String action) {
         //// Search/reset button section
         JPanel buttonSection = new JPanel();
@@ -585,6 +628,11 @@ public class MainWindow extends JFrame {
         return buttonSection;
     }
 
+    /**
+     * Starts the DayPlanner application.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
         MainWindow window = new MainWindow();
         window.setVisible(true);

@@ -22,16 +22,26 @@ public class DayPlanner {
 	// HashMap containing tokenized title keywords for fast searching
 	private HashMap<String, ArrayList<Integer>> titleHashMap;
 
+	/**
+	 * Creates an empty day planner.
+	 */
 	public DayPlanner() {
 		this.activities = new ArrayList<>();
 		this.titleHashMap = new HashMap<>();
 	}
 
+	/**
+	 * Returns a copy of all currently stored activities.
+	 *
+	 * @return a copy of the stored activity list
+	 */
 	public ArrayList<Activity> getActivities() {
 		return new ArrayList<Activity>(activities);
 	}
 
 	/**
+	 * Adds an activity of the requested type.
+	 *
 	 * Adds a new activity to the appropriate array
 	 * 
 	 * @param type         The type of the acitivity
@@ -40,6 +50,7 @@ public class DayPlanner {
 	 * @param endingTime   The ending time of the activity
 	 * @param comment      A short description of the activity
 	 * @param location     The location of the activity (if the activity is 'other')
+	 * @throws InvalidActivityException if the activity fields are invalid
 	 */
 	public void addNewActivity(String type, String title, Time startingTime, Time endingTime, String comment,
 			String location) throws InvalidActivityException {
@@ -79,6 +90,7 @@ public class DayPlanner {
 	 *                      activity
 	 * @param startingTime  If given, the starting time of the range
 	 * @param endingTime    If given, the ending time of the range
+	 * @return activities matching all supplied restrictions
 	 */
 	public ArrayList<Activity> getActivitiesBasedOnRestrictions(String type, String titleKeywords, Time startingTime,
 			Time endingTime) {
@@ -145,6 +157,8 @@ public class DayPlanner {
 	/**
 	 * Writes all activities to the output file using the planner's activity
 	 * format.
+	 *
+	 * @param fileName the output file name
 	 */
 	public void writeToFile(String fileName) {
 		PrintWriter writer = null;
@@ -240,6 +254,12 @@ public class DayPlanner {
 		return line.substring(line.indexOf('=') + 1).replace("'", "").trim();
 	}
 
+	/**
+	 * Reads and extracts the next key-value field from a file.
+	 *
+	 * @param reader the scanner containing the stored activity file
+	 * @return the extracted value, or an empty string if no line remains
+	 */
 	private static String getNextStoredValue(Scanner reader) {
 		if (!reader.hasNextLine()) {
 			return "";
