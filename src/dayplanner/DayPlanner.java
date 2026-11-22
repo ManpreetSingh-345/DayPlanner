@@ -118,7 +118,7 @@ public class DayPlanner {
 					if (((type.equals("home") && activities.get(index) instanceof HomeActivity)
 							|| (type.equals("school") && activities.get(index) instanceof SchoolActivity)
 							|| (type.equals("other") && activities.get(index) instanceof OtherActivity)
-							|| type.isBlank())
+							|| type.equals("none"))
 							&& activities.get(index).fitsTimeCondition(startingTime, endingTime)) {
 						restrictedActivities.add(activities.get(index));
 					}
@@ -132,7 +132,7 @@ public class DayPlanner {
 				if (((type.equals("home") && activities.get(i) instanceof HomeActivity)
 						|| (type.equals("school") && activities.get(i) instanceof SchoolActivity)
 						|| (type.equals("other") && activities.get(i) instanceof OtherActivity)
-						|| type.isBlank())
+						|| type.equals("none"))
 						&& activities.get(i).fitsTimeCondition(startingTime, endingTime)) {
 					restrictedActivities.add(activities.get(i));
 				}

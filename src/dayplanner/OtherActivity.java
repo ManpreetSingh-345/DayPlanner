@@ -44,7 +44,12 @@ public class OtherActivity extends Activity {
      * @see src.dayplanner.Activity#toString()
      */
     public String toString() {
-        return super.toString() + ",%s".formatted(this.location);
+        if (this.getComment().isBlank()) {
+            return "other: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                    this.getEndingTime().toString(), this.getLocation());
+        }
+        return "other: %s, %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                this.getEndingTime().toString(), this.getComment(), this.getLocation());
     }
 
     @Override

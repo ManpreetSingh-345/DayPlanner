@@ -22,6 +22,15 @@ public class HomeActivity extends Activity {
         super();
     }
 
+    public String toString() {
+        if (this.getComment().isBlank()) {
+            return "home: %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                    this.getEndingTime().toString());
+        }
+        return "home: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                this.getEndingTime().toString(), this.getComment());
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other) {

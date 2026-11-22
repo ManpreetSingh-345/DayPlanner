@@ -136,7 +136,7 @@ public class Time {
      *         string. If the inputs aren't valid however, the method returns null.
      */
     public static Time getTimeFromString(String timeString) {
-        String[] timeArray = timeString.split(" ");
+        String[] timeArray = timeString.split(", ");
         if (timeArray.length != 5)
             return null;
         try {

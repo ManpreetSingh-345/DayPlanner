@@ -22,6 +22,15 @@ public class SchoolActivity extends Activity {
         super();
     }
 
+    public String toString() {
+        if (this.getComment().isBlank()) {
+            return "school: %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                    this.getEndingTime().toString());
+        }
+        return "school: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                this.getEndingTime().toString(), this.getComment());
+    }
+
     @Override
     public boolean equals(Object other) {
         if (this == other) {

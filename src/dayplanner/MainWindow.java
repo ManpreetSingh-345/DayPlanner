@@ -23,6 +23,9 @@ import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 public class MainWindow extends JFrame {
     public static final int WIDTH = 500;
@@ -33,14 +36,25 @@ public class MainWindow extends JFrame {
     private JPanel addPanel; // Add panel letting user add a new activity
     private JPanel searchPanel; // Search panel letting user search for an activity
 
+    DayPlanner dayplanner = new DayPlanner();
+
     public MainWindow() {
         super();
+        dayplanner.readFromFile("output.txt");
         // Add base properties to window
         setSize(WIDTH, HEIGHT);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setTitle("DayPlanner");
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+        // Save contents of dayplanner upon exit
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosing(WindowEvent e) {
+                System.out.println("Saving to output.txt...");
+                dayplanner.writeToFile("output.txt");
+            }
+        });
 
         createInitialPanel();
         createAddPanel();
@@ -261,16 +275,37 @@ public class MainWindow extends JFrame {
             } else if (comp instanceof JButton && comp.getName().equals("Add")) {
                 JButton addButton = (JButton) comp;
                 addButton.addActionListener(e -> {
+                    Time startingTime = Time.getTimeFromString(startingTimeInput.getText());
+                    Time endingTime = Time.getTimeFromString(endingTimeInput.getText());
+                    // Time conditions
+                    boolean emptyStartingTime = startingTime == null;
+                    boolean emptyEndingTime = endingTime == null;
+                    boolean invalidStartingTime = !startingTime.isValid();
+                    boolean invalidEndingTime = !endingTime.isValid();
+                    boolean startingTimeAfterEndingTime = endingTime.compareTo(startingTime) <= 0;
                     if (titleInput.getText().isBlank()) {
                         messages.append("Error: title is missing. Try again.\n");
-                    } else if (startingTimeInput.getText().isBlank()) {
+                    } else if (emptyStartingTime) {
                         messages.append("Error: starting time is missing. Try again.\n");
-                    } else if (endingTimeInput.getText().isBlank()) {
+                    } else if (emptyEndingTime) {
                         messages.append("Error: ending time is missing. Try again.\n");
+                    } else if (invalidStartingTime) {
+                        messages.append(
+                                "Error: starting time is invalid. Make sure to adhere to the Gregorian standard, which includes valid dates in case of leap years. Try again.\n");
+                    } else if (invalidEndingTime) {
+                        messages.append(
+                                "Error: ending time is invalid. Make sure to adhere to the Gregorian standard, which includes valid dates in case of leap years. Try again.\n");
+                    } else if (startingTimeAfterEndingTime) {
+                        messages.append("Error: starting time must be strictly before ending time. Try again.\n");
                     } else if (typeDropdown.getSelectedItem().equals("other") && locationInput.getText().isBlank()) {
                         messages.append("Error: location is missing. Try again.\n");
                     } else {
                         messages.append("Adding new activity\n");
+                        String type = String.valueOf(typeDropdown.getSelectedItem());
+                        String title = titleInput.getText();
+                        String comment = commentInput.getText();
+                        String location = locationInput.getText();
+                        dayplanner.addNewActivity(type, title, startingTime, endingTime, comment, location);
                     }
                 });
             }
@@ -431,6 +466,46 @@ public class MainWindow extends JFrame {
                     titleInput.setText("");
                     startingTimeInput.setText("");
                     endingTimeInput.setText("");
+                });
+            } else if (comp instanceof JButton && comp.getName().equals("Search")) {
+                JButton searchButton = (JButton) comp;
+                searchButton.addActionListener(e -> {
+                    Time startingTime = Time.getTimeFromString(startingTimeInput.getText());
+                    Time endingTime = Time.getTimeFromString(endingTimeInput.getText());
+                    // Time conditions
+                    boolean invalidStartingTime = startingTime != null && !startingTime.isValid();
+                    boolean invalidEndingTime = endingTime != null && !endingTime.isValid();
+                    boolean startingTimeAfterEndingTime = startingTime != null && endingTime != null
+                            && endingTime.compareTo(startingTime) <= 0;
+                    if (invalidStartingTime) {
+                        messages.append(
+                                "Error: starting time is invalid. Make sure to adhere to the Gregorian standard, which includes valid dates in case of leap years. Try again.\n");
+                    } else if (invalidEndingTime) {
+                        messages.append(
+                                "Error: ending time is invalid. Make sure to adhere to the Gregorian standard, which includes valid dates in case of leap years. Try again.\n");
+                    } else if (startingTimeAfterEndingTime) {
+                        messages.append("Error: starting time must be strictly before ending time. Try again.\n");
+                    } else {
+                        messages.append("Searching activities\n");
+                        String type = String.valueOf(typeDropdown.getSelectedItem());
+                        String title = titleInput.getText();
+                        ArrayList<Activity> restrictedActivities = dayplanner.getActivitiesBasedOnRestrictions(type,
+                                title, startingTime, endingTime);
+
+                        if (restrictedActivities != null && restrictedActivities.size() != 0) {
+                            for (Activity activity : restrictedActivities) {
+                                if (activity instanceof HomeActivity) {
+                                    messages.append(((HomeActivity) activity).toString() + "\n");
+                                } else if (activity instanceof SchoolActivity) {
+                                    messages.append(((SchoolActivity) activity).toString() + "\n");
+                                } else if (activity instanceof OtherActivity) {
+                                    messages.append(((OtherActivity) activity).toString() + "\n");
+                                }
+                            }
+                        } else {
+                            messages.append("No activities found.\n");
+                        }
+                    }
                 });
             }
         }

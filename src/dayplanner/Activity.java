@@ -70,6 +70,9 @@ public class Activity {
      * @see java.lang.Object#toString()
      */
     public String toString() {
+        if (this.comment.isBlank()) {
+            return "%s, %s, %s".formatted(this.title, this.startingTime, this.endingTime);
+        }
         return "%s, %s, %s, %s".formatted(this.title, this.startingTime, this.endingTime, this.comment);
     }
 
