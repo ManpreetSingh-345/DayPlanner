@@ -258,6 +258,21 @@ public class MainWindow extends JFrame {
                     commentInput.setText("");
                     locationInput.setText("");
                 });
+            } else if (comp instanceof JButton && comp.getName().equals("Add")) {
+                JButton addButton = (JButton) comp;
+                addButton.addActionListener(e -> {
+                    if (titleInput.getText().isBlank()) {
+                        messages.append("Error: title is missing. Try again.\n");
+                    } else if (startingTimeInput.getText().isBlank()) {
+                        messages.append("Error: starting time is missing. Try again.\n");
+                    } else if (endingTimeInput.getText().isBlank()) {
+                        messages.append("Error: ending time is missing. Try again.\n");
+                    } else if (typeDropdown.getSelectedItem().equals("other") && locationInput.getText().isBlank()) {
+                        messages.append("Error: location is missing. Try again.\n");
+                    } else {
+                        messages.append("Adding new activity\n");
+                    }
+                });
             }
         }
 
