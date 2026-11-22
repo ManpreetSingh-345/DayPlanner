@@ -118,7 +118,8 @@ public class MainWindow extends JFrame {
         JPanel addActivityTitle = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         addActivityTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         addActivityTitle.add(new JLabel("Title: "));
-        addActivityTitle.add(new JTextField(20));
+        JTextField titleInput = new JTextField(20);
+        addActivityTitle.add(titleInput);
         addActivityTitle.setMaximumSize(new Dimension(Integer.MAX_VALUE, addActivityType.getPreferredSize().height));
         inputContainer.add(addActivityTitle);
 
@@ -171,7 +172,8 @@ public class MainWindow extends JFrame {
         JPanel addActivityComment = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         addActivityComment.setAlignmentX(Component.LEFT_ALIGNMENT);
         addActivityComment.add(new JLabel("Comment: "));
-        addActivityComment.add(new JTextField(20));
+        JTextField commentInput = new JTextField(20);
+        addActivityComment.add(commentInput);
         addActivityComment
                 .setMaximumSize(new Dimension(Integer.MAX_VALUE, addActivityComment.getPreferredSize().height));
         inputContainer.add(addActivityComment);
@@ -180,7 +182,8 @@ public class MainWindow extends JFrame {
         JPanel addActivityLocation = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         addActivityLocation.setAlignmentX(Component.LEFT_ALIGNMENT);
         addActivityLocation.add(new JLabel("Location: "));
-        addActivityLocation.add(new JTextField(20));
+        JTextField locationInput = new JTextField(20);
+        addActivityLocation.add(locationInput);
         addActivityLocation
                 .setMaximumSize(
                         new Dimension(Integer.MAX_VALUE, addActivityLocation.getPreferredSize().height));
@@ -207,28 +210,8 @@ public class MainWindow extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(addActivitySection, gbc);
 
-        //// Add/reset button section
-        JPanel buttonSection = new JPanel();
-        buttonSection.setLayout(new BoxLayout(buttonSection, BoxLayout.Y_AXIS));
-        buttonSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-        // Buttons + Layouts
-        buttonSection.add(Box.createVerticalGlue()); // Creates space away from top of the screen
-
-        // Reset Button
-        JButton resetButton = new JButton("Reset");
-        resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttonSection.add(resetButton);
-
-        // Create space between buttons
-        buttonSection.add(Box.createRigidArea(new Dimension(0, 50)));
-
-        // Add button
-        JButton addButton = new JButton("Add");
-        addButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttonSection.add(addButton);
-
-        buttonSection.add(Box.createVerticalGlue()); // Creates space away from bottom of the screen
+        //// Add button section
+        JPanel addButtonSection = createButtonSection("Add");
 
         // Grid bag constraints for button section
         gbc.gridx = 1;
@@ -236,7 +219,7 @@ public class MainWindow extends JFrame {
         gbc.weightx = 0.25;
         gbc.weighty = 0.40;
         gbc.fill = GridBagConstraints.BOTH;
-        addPanelGrid.add(buttonSection, gbc);
+        addPanelGrid.add(addButtonSection, gbc);
 
         //// Messages section
         JPanel messagesSection = new JPanel(new BorderLayout(0, 5)); // 5px vertical gap between label and text area
@@ -262,6 +245,21 @@ public class MainWindow extends JFrame {
         gbc.weighty = 0.60;
         gbc.fill = GridBagConstraints.BOTH;
         addPanelGrid.add(messagesSection, gbc);
+
+        //// Action listeners for button inputs
+        for (Component comp : addButtonSection.getComponents()) {
+            if (comp instanceof JButton && comp.getName().equals("Reset")) {
+                JButton resetButton = (JButton) comp;
+                resetButton.addActionListener(e -> {
+                    typeDropdown.setSelectedIndex(0);
+                    titleInput.setText("");
+                    startingTimeInput.setText("");
+                    endingTimeInput.setText("");
+                    commentInput.setText("");
+                    locationInput.setText("");
+                });
+            }
+        }
 
         // Add the grid layout to the wrapper panel
         addPanel.add(addPanelGrid, BorderLayout.CENTER);
@@ -297,7 +295,7 @@ public class MainWindow extends JFrame {
         // ↓↓ Sets the maximum height of the searchActivityType panel to its preferred
         // height, and let's it stretch as much as it wants to horizontally
         searchActivityType.add(new JLabel("Type: "));
-        String[] typeOptions = { "home", "school", "other" };
+        String[] typeOptions = { "none", "home", "school", "other" };
         JComboBox<String> typeDropdown = new JComboBox<>(typeOptions);
         searchActivityType.add(typeDropdown);
         searchActivityType
@@ -311,7 +309,8 @@ public class MainWindow extends JFrame {
         JPanel searchActivityTitle = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
         searchActivityTitle.setAlignmentX(Component.LEFT_ALIGNMENT);
         searchActivityTitle.add(new JLabel("Title: "));
-        searchActivityTitle.add(new JTextField(20));
+        JTextField titleInput = new JTextField(20);
+        searchActivityTitle.add(titleInput);
         searchActivityTitle
                 .setMaximumSize(new Dimension(Integer.MAX_VALUE, searchActivityTitle.getPreferredSize().height));
         inputContainer.add(searchActivityTitle);
@@ -361,27 +360,7 @@ public class MainWindow extends JFrame {
         // Create space between input boxes
         inputContainer.add(Box.createRigidArea(new Dimension(0, 10)));
 
-        /// Location input
-        JPanel searchActivityLocation = new JPanel(new FlowLayout(FlowLayout.LEFT, 0, 0));
-        searchActivityLocation.setAlignmentX(Component.LEFT_ALIGNMENT);
-        searchActivityLocation.add(new JLabel("Location: "));
-        searchActivityLocation.add(new JTextField(20));
-        searchActivityLocation
-                .setMaximumSize(
-                        new Dimension(Integer.MAX_VALUE, searchActivityLocation.getPreferredSize().height));
-        searchActivityLocation.setVisible(false);
-        inputContainer.add(searchActivityLocation);
-
-        typeDropdown.addActionListener(e -> {
-            String selected = (String) typeDropdown.getSelectedItem();
-
-            if (selected.equals("other")) {
-                searchActivityLocation.setVisible(true);
-            } else {
-                searchActivityLocation.setVisible(false);
-            }
-        });
-
+        // Add inputs to search section
         searchActivitySection.add(inputContainer);
 
         // Grid bag constraints for 'search activity' section
@@ -392,28 +371,8 @@ public class MainWindow extends JFrame {
         gbc.fill = GridBagConstraints.BOTH;
         searchPanelGrid.add(searchActivitySection, gbc);
 
-        //// Search/reset button section
-        JPanel buttonSection = new JPanel();
-        buttonSection.setLayout(new BoxLayout(buttonSection, BoxLayout.Y_AXIS));
-        buttonSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-
-        // Buttons + Layouts
-        buttonSection.add(Box.createVerticalGlue()); // Creates space away from top of the screen
-
-        // Reset Button
-        JButton resetButton = new JButton("Reset");
-        resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttonSection.add(resetButton);
-
-        // Create space between buttons
-        buttonSection.add(Box.createRigidArea(new Dimension(0, 50)));
-
-        // Search button
-        JButton searchButton = new JButton("Search");
-        searchButton.setAlignmentX(Component.CENTER_ALIGNMENT);
-        buttonSection.add(searchButton);
-
-        buttonSection.add(Box.createVerticalGlue()); // Creates space away from bottom of the screen
+        //// Search button section
+        JPanel searchButtonSection = createButtonSection("Search");
 
         // Grid bag constraints for button section
         gbc.gridx = 1;
@@ -421,7 +380,7 @@ public class MainWindow extends JFrame {
         gbc.weightx = 0.25;
         gbc.weighty = 0.40;
         gbc.fill = GridBagConstraints.BOTH;
-        searchPanelGrid.add(buttonSection, gbc);
+        searchPanelGrid.add(searchButtonSection, gbc);
 
         //// Messages section
         JPanel messagesSection = new JPanel(new BorderLayout(0, 5)); // 5px vertical gap between label and text area
@@ -447,6 +406,19 @@ public class MainWindow extends JFrame {
         gbc.weighty = 0.60;
         gbc.fill = GridBagConstraints.BOTH;
         searchPanelGrid.add(messagesSection, gbc);
+
+        //// Action listeners for button inputs
+        for (Component comp : searchButtonSection.getComponents()) {
+            if (comp instanceof JButton && comp.getName().equals("Reset")) {
+                JButton resetButton = (JButton) comp;
+                resetButton.addActionListener(e -> {
+                    typeDropdown.setSelectedIndex(0);
+                    titleInput.setText("");
+                    startingTimeInput.setText("");
+                    endingTimeInput.setText("");
+                });
+            }
+        }
 
         // Add the grid layout to the wrapper panel
         searchPanel.add(searchPanelGrid, BorderLayout.CENTER);
@@ -487,6 +459,35 @@ public class MainWindow extends JFrame {
     private void showPanel(String panelName) {
         CardLayout layout = (CardLayout) container.getLayout();
         layout.show(container, panelName);
+    }
+
+    private JPanel createButtonSection(String action) {
+        //// Search/reset button section
+        JPanel buttonSection = new JPanel();
+        buttonSection.setLayout(new BoxLayout(buttonSection, BoxLayout.Y_AXIS));
+        buttonSection.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+
+        // Buttons + Layouts
+        buttonSection.add(Box.createVerticalGlue()); // Creates space away from top of the screen
+
+        // Reset Button
+        JButton resetButton = new JButton("Reset");
+        resetButton.setName("Reset");
+        resetButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonSection.add(resetButton);
+
+        // Create space between buttons
+        buttonSection.add(Box.createRigidArea(new Dimension(0, 50)));
+
+        // Search button
+        JButton actionButton = new JButton(action);
+        actionButton.setName(action);
+        actionButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+        buttonSection.add(actionButton);
+
+        buttonSection.add(Box.createVerticalGlue()); // Creates space away from bottom of the screen
+
+        return buttonSection;
     }
 
     public static void main(String[] args) {
