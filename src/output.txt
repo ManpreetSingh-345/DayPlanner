@@ -1,6 +1,0 @@
-type = 'home'
-title = 'title'
-start = '2026/01/01,1:01'
-end = '2026/01/01,1:02'
-comment = ''
-
