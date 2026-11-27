@@ -268,6 +268,8 @@ public class Time implements Comparable<Time> {
      *
      * @return true if this Time object is valid, which means it falls under the
      *         Gregorian Calendar, false otherwise
+     * @throws InvalidTimeException if a given parameter violates the Gregorian
+     *                              Calendar standard
      */
     public boolean isValid() throws InvalidTimeException {
         // The months April, June, September, and November have 30 days in them

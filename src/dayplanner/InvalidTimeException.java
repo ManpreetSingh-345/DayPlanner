@@ -1,5 +1,10 @@
 package dayplanner;
 
+/**
+ * Indicates that a Time object contains invalid field values
+ * 
+ * @author Manpreet Singh
+ */
 public class InvalidTimeException extends Exception {
     /**
      * Creates an InvalidTimeException with a given message.
