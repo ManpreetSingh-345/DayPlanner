@@ -237,7 +237,7 @@ public abstract class Activity {
      *                          with
      * @return true if the activity falls within both supplied time bounds
      */
-    public boolean fitsTimeCondition(Time otherStartingTime, Time otherEndingTime) throws InvalidTimeException {
+    public boolean fitsTimeCondition(Time otherStartingTime, Time otherEndingTime) {
         // If the other starting time is null (i.e. the user did not input anything for
         // the starting time), or the input is not null and the starting time in this
         // object comes after the other starting time, set to true, otherwise false

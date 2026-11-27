@@ -128,16 +128,12 @@ public class DayPlanner {
 				// Match each activity in the final baseList by the remaining conditions (if
 				// provided)
 				for (int index : baseList) {
-					try {
-						if (((type.equals("home") && activities.get(index) instanceof HomeActivity)
-								|| (type.equals("school") && activities.get(index) instanceof SchoolActivity)
-								|| (type.equals("other") && activities.get(index) instanceof OtherActivity)
-								|| type.equals("none"))
-								&& activities.get(index).fitsTimeCondition(startingTime, endingTime)) {
-							restrictedActivities.add(activities.get(index));
-						}
-					} catch (InvalidTimeException exception) {
-
+					if (((type.equals("home") && activities.get(index) instanceof HomeActivity)
+							|| (type.equals("school") && activities.get(index) instanceof SchoolActivity)
+							|| (type.equals("other") && activities.get(index) instanceof OtherActivity)
+							|| type.equals("none"))
+							&& activities.get(index).fitsTimeCondition(startingTime, endingTime)) {
+						restrictedActivities.add(activities.get(index));
 					}
 				}
 			}
@@ -146,16 +142,12 @@ public class DayPlanner {
 		// conditions (four if the activity type is other)
 		else {
 			for (int i = 0; i < activities.size(); i++) {
-				try {
-					if (((type.equals("home") && activities.get(i) instanceof HomeActivity)
-							|| (type.equals("school") && activities.get(i) instanceof SchoolActivity)
-							|| (type.equals("other") && activities.get(i) instanceof OtherActivity)
-							|| type.equals("none"))
-							&& activities.get(i).fitsTimeCondition(startingTime, endingTime)) {
-						restrictedActivities.add(activities.get(i));
-					}
-				} catch (InvalidTimeException exception) {
-
+				if (((type.equals("home") && activities.get(i) instanceof HomeActivity)
+						|| (type.equals("school") && activities.get(i) instanceof SchoolActivity)
+						|| (type.equals("other") && activities.get(i) instanceof OtherActivity)
+						|| type.equals("none"))
+						&& activities.get(i).fitsTimeCondition(startingTime, endingTime)) {
+					restrictedActivities.add(activities.get(i));
 				}
 			}
 		}
