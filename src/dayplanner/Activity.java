@@ -155,6 +155,24 @@ public abstract class Activity {
         return "%s, %s, %s, %s".formatted(this.title, this.startingTime, this.endingTime, this.comment);
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        if (!(other instanceof Activity)) {
+            return false;
+        }
+
+        Activity otherActivity = (Activity) other;
+
+        return getTitle().equals(otherActivity.getTitle())
+                && getStartingTime().equals(otherActivity.getStartingTime())
+                && getEndingTime().equals(otherActivity.getEndingTime())
+                && getComment().equals(otherActivity.getComment());
+    }
+
     /**
      * 
      * Searches the activity title for every supplied keyword.
