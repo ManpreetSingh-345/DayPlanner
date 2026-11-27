@@ -51,9 +51,10 @@ public class DayPlanner {
 	 * @param comment      A short description of the activity
 	 * @param location     The location of the activity (if the activity is 'other')
 	 * @throws InvalidActivityException if the activity fields are invalid
+	 * @throws InvalidTimeException     if an activity time is invalid
 	 */
 	public void addNewActivity(String type, String title, Time startingTime, Time endingTime, String comment,
-			String location) throws InvalidActivityException {
+			String location) throws InvalidActivityException, InvalidTimeException {
 		switch (type) {
 			case "home":
 				activities.add(new HomeActivity(title, startingTime,
@@ -127,12 +128,16 @@ public class DayPlanner {
 				// Match each activity in the final baseList by the remaining conditions (if
 				// provided)
 				for (int index : baseList) {
-					if (((type.equals("home") && activities.get(index) instanceof HomeActivity)
-							|| (type.equals("school") && activities.get(index) instanceof SchoolActivity)
-							|| (type.equals("other") && activities.get(index) instanceof OtherActivity)
-							|| type.equals("none"))
-							&& activities.get(index).fitsTimeCondition(startingTime, endingTime)) {
-						restrictedActivities.add(activities.get(index));
+					try {
+						if (((type.equals("home") && activities.get(index) instanceof HomeActivity)
+								|| (type.equals("school") && activities.get(index) instanceof SchoolActivity)
+								|| (type.equals("other") && activities.get(index) instanceof OtherActivity)
+								|| type.equals("none"))
+								&& activities.get(index).fitsTimeCondition(startingTime, endingTime)) {
+							restrictedActivities.add(activities.get(index));
+						}
+					} catch (InvalidTimeException exception) {
+
 					}
 				}
 			}
@@ -141,12 +146,16 @@ public class DayPlanner {
 		// conditions (four if the activity type is other)
 		else {
 			for (int i = 0; i < activities.size(); i++) {
-				if (((type.equals("home") && activities.get(i) instanceof HomeActivity)
-						|| (type.equals("school") && activities.get(i) instanceof SchoolActivity)
-						|| (type.equals("other") && activities.get(i) instanceof OtherActivity)
-						|| type.equals("none"))
-						&& activities.get(i).fitsTimeCondition(startingTime, endingTime)) {
-					restrictedActivities.add(activities.get(i));
+				try {
+					if (((type.equals("home") && activities.get(i) instanceof HomeActivity)
+							|| (type.equals("school") && activities.get(i) instanceof SchoolActivity)
+							|| (type.equals("other") && activities.get(i) instanceof OtherActivity)
+							|| type.equals("none"))
+							&& activities.get(i).fitsTimeCondition(startingTime, endingTime)) {
+						restrictedActivities.add(activities.get(i));
+					}
+				} catch (InvalidTimeException exception) {
+
 				}
 			}
 		}
@@ -159,8 +168,9 @@ public class DayPlanner {
 	 * format.
 	 *
 	 * @param fileName the output file name
+	 * @throws InvalidTimeException if an activity time is invalid
 	 */
-	public void writeToFile(String fileName) {
+	public void writeToFile(String fileName) throws InvalidTimeException {
 		PrintWriter writer = null;
 
 		// Instantiate the writer object using a try/catch block
@@ -197,8 +207,9 @@ public class DayPlanner {
 	 * Reads activities from a file and adds them to the planner.
 	 *
 	 * @param fileName the name of the file containing the saved activities
+	 * @throws InvalidTimeException if a stored time is invalid
 	 */
-	public void readFromFile(String fileName) {
+	public void readFromFile(String fileName) throws InvalidTimeException {
 		Scanner reader = null;
 
 		try {
@@ -231,6 +242,8 @@ public class DayPlanner {
 				addNewActivity(type, title, start, end, comment, location);
 			} catch (InvalidActivityException exception) {
 				System.out.println("Error loading activity: " + exception.getMessage());
+			} catch (InvalidTimeException exception) {
+				System.out.println("Error processing time: " + exception.getMessage());
 			}
 
 			if (reader.hasNextLine()) {
@@ -272,8 +285,9 @@ public class DayPlanner {
 	 *
 	 * @param timeString a time in the format YYYY/MM/DD
 	 * @return the parsed time
+	 * @throws InvalidTimeException if the stored time is invalid
 	 */
-	private static Time getStoredTime(String timeString) {
+	private static Time getStoredTime(String timeString) throws InvalidTimeException {
 		if (timeString == null)
 			return null;
 		try {

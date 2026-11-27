@@ -17,9 +17,10 @@ public class SchoolActivity extends Activity {
      * @param comment      A short description of the activity
      * 
      * @throws InvalidActivityException if an activity field is invalid
+     * @throws InvalidTimeException if an activity time is invalid
      */
     public SchoolActivity(String title, Time startingTime, Time endingTime, String comment)
-            throws InvalidActivityException {
+            throws InvalidActivityException, InvalidTimeException {
         super(title, startingTime, endingTime, comment);
     }
 
@@ -29,8 +30,9 @@ public class SchoolActivity extends Activity {
      * @param otherSchoolActivity the school activity to copy
      * 
      * @throws InvalidActivityException if copied fields are invalid
+     * @throws InvalidTimeException if a copied time is invalid
      */
-    public SchoolActivity(SchoolActivity otherSchoolActivity) throws InvalidActivityException {
+    public SchoolActivity(SchoolActivity otherSchoolActivity) throws InvalidActivityException, InvalidTimeException {
         super(otherSchoolActivity);
     }
 
@@ -47,11 +49,15 @@ public class SchoolActivity extends Activity {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        if (this.getComment().isBlank()) {
-            return "school: %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
-                    this.getEndingTime().toString());
+        try {
+            if (this.getComment().isBlank()) {
+                return "school: %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                        this.getEndingTime().toString());
+            }
+            return "school: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                    this.getEndingTime().toString(), this.getComment());
+        } catch (InvalidTimeException e) {
+            return null;
         }
-        return "school: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
-                this.getEndingTime().toString(), this.getComment());
     }
 }

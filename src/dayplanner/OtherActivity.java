@@ -22,9 +22,10 @@ public class OtherActivity extends Activity {
      * @param location     The location of the activity
      * 
      * @throws InvalidActivityException if an activity field is invalid
+     * @throws InvalidTimeException if an activity time is invalid
      */
     public OtherActivity(String title, Time startingTime, Time endingTime, String comment,
-            String location) throws InvalidActivityException {
+            String location) throws InvalidActivityException, InvalidTimeException {
         super(title, startingTime, endingTime, comment);
         setLocation(location);
     }
@@ -35,8 +36,9 @@ public class OtherActivity extends Activity {
      * @param otherOtherActivity the activity to copy
      * 
      * @throws InvalidActivityException if copied fields are invalid
+     * @throws InvalidTimeException if a copied time is invalid
      */
-    public OtherActivity(OtherActivity otherOtherActivity) throws InvalidActivityException {
+    public OtherActivity(OtherActivity otherOtherActivity) throws InvalidActivityException, InvalidTimeException {
         super(otherOtherActivity);
         setLocation(otherOtherActivity.location);
     }
@@ -78,12 +80,16 @@ public class OtherActivity extends Activity {
      * @see java.lang.Object#toString()
      */
     public String toString() {
-        if (this.getComment().isBlank()) {
-            return "other: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
-                    this.getEndingTime().toString(), this.getLocation());
+        try {
+            if (this.getComment().isBlank()) {
+                return "other: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                        this.getEndingTime().toString(), this.getLocation());
+            }
+            return "other: %s, %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
+                    this.getEndingTime().toString(), this.getComment(), this.getLocation());
+        } catch (InvalidTimeException e) {
+            return null;
         }
-        return "other: %s, %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
-                this.getEndingTime().toString(), this.getComment(), this.getLocation());
     }
 
     /**

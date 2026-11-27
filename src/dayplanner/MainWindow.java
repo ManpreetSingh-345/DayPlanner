@@ -58,8 +58,9 @@ public class MainWindow extends JFrame {
      * Creates and initializes the main DayPlanner window.
      * 
      * @param fileName name of file to read from
+     * @throws InvalidTimeException if a time read from file is invalid
      */
-    public MainWindow(String fileName) {
+    public MainWindow(String fileName) throws InvalidTimeException {
         super();
         if (!fileName.isBlank()) {
             dayplanner.readFromFile(fileName);
@@ -74,11 +75,15 @@ public class MainWindow extends JFrame {
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                System.out.println("Saving to output.txt...");
-                if (!fileName.isBlank()) {
-                    dayplanner.writeToFile(fileName);
+                try {
+                    System.out.println("Saving to output.txt...");
+                    if (!fileName.isBlank()) {
+                        dayplanner.writeToFile(fileName);
+                    }
+                    dayplanner.writeToFile("output.txt");
+                } catch (InvalidTimeException exception) {
+                    System.out.println("Exception occurred: " + exception.getMessage());
                 }
-                dayplanner.writeToFile("output.txt");
             }
         });
 
@@ -120,8 +125,10 @@ public class MainWindow extends JFrame {
 
     /**
      * Creates the 'add' section for creating and adding new activities
+     *
+     * @throws InvalidTimeException if an activity time is invalid
      */
-    private void createAddPanel() {
+    private void createAddPanel() throws InvalidTimeException {
         addPanel = new JPanel(new BorderLayout());
 
         // Instantiating grid layout
@@ -297,7 +304,6 @@ public class MainWindow extends JFrame {
             if (comp instanceof JButton && comp.getName().equals("Reset")) {
                 JButton resetButton = (JButton) comp;
                 resetButton.addActionListener(e -> {
-                    typeDropdown.setSelectedIndex(0);
                     titleInput.setText("");
                     startingTimeInput.setText("");
                     endingTimeInput.setText("");
@@ -307,13 +313,30 @@ public class MainWindow extends JFrame {
             } else if (comp instanceof JButton && comp.getName().equals("Add")) {
                 JButton addButton = (JButton) comp;
                 addButton.addActionListener(e -> {
-                    Time startingTime = Time.getTimeFromString(startingTimeInput.getText());
-                    Time endingTime = Time.getTimeFromString(endingTimeInput.getText());
+                    Time startingTime = null;
+                    Time endingTime = null;
+
+                    try {
+                        startingTime = Time.getTimeFromString(startingTimeInput.getText());
+                        endingTime = Time.getTimeFromString(endingTimeInput.getText());
+                    } catch (InvalidTimeException exception) {
+                        messages.append("Invalid time exception occurred: " + exception.getMessage());
+                    }
+
                     // Time conditions
                     boolean emptyStartingTime = startingTime == null;
                     boolean emptyEndingTime = endingTime == null;
-                    boolean invalidStartingTime = startingTime != null && !startingTime.isValid();
-                    boolean invalidEndingTime = endingTime != null && !endingTime.isValid();
+
+                    boolean invalidStartingTime = false;
+                    boolean invalidEndingTime = false;
+
+                    try {
+                        invalidStartingTime = startingTime != null && !startingTime.isValid();
+                        invalidEndingTime = endingTime != null && !endingTime.isValid();
+                    } catch (InvalidTimeException exception) {
+                        messages.append("Invalid time exception occurred: " + exception.getMessage());
+                    }
+
                     boolean startingTimeAfterEndingTime = startingTime != null && endingTime != null
                             && endingTime.compareTo(startingTime) <= 0;
                     if (titleInput.getText().isBlank()) {
@@ -341,7 +364,9 @@ public class MainWindow extends JFrame {
                         try {
                             dayplanner.addNewActivity(type, title, startingTime, endingTime, comment, location);
                         } catch (InvalidActivityException exception) {
-                            messages.append("Error: " + exception.getMessage() + "\n");
+                            messages.append("Activity exception occurred: " + exception.getMessage() + "\n");
+                        } catch (InvalidTimeException exception) {
+                            messages.append("Time exception occurred: " + exception.getMessage() + "\n");
                         }
                     }
                 });
@@ -510,11 +535,26 @@ public class MainWindow extends JFrame {
             } else if (comp instanceof JButton && comp.getName().equals("Search")) {
                 JButton searchButton = (JButton) comp;
                 searchButton.addActionListener(e -> {
-                    Time startingTime = Time.getTimeFromString(startingTimeInput.getText());
-                    Time endingTime = Time.getTimeFromString(endingTimeInput.getText());
+                    Time startingTime = null;
+                    Time endingTime = null;
+
+                    try {
+                        startingTime = Time.getTimeFromString(startingTimeInput.getText());
+                        endingTime = Time.getTimeFromString(endingTimeInput.getText());
+                    } catch (InvalidTimeException exception) {
+                        messages.append("Invalid time exception occurred: " + exception.getMessage());
+                    }
                     // Time conditions
-                    boolean invalidStartingTime = startingTime != null && !startingTime.isValid();
-                    boolean invalidEndingTime = endingTime != null && !endingTime.isValid();
+                    boolean invalidStartingTime = false;
+                    boolean invalidEndingTime = false;
+
+                    try {
+                        invalidStartingTime = startingTime != null && !startingTime.isValid();
+                        invalidEndingTime = endingTime != null && !endingTime.isValid();
+                    } catch (InvalidTimeException exception) {
+                        messages.append("Invalid time exception occurred: " + exception.getMessage());
+                    }
+
                     boolean startingTimeAfterEndingTime = startingTime != null && endingTime != null
                             && endingTime.compareTo(startingTime) <= 0;
                     if (invalidStartingTime) {
@@ -534,13 +574,7 @@ public class MainWindow extends JFrame {
 
                         if (restrictedActivities != null && restrictedActivities.size() != 0) {
                             for (Activity activity : restrictedActivities) {
-                                if (activity instanceof HomeActivity) {
-                                    messages.append(((HomeActivity) activity).toString() + "\n");
-                                } else if (activity instanceof SchoolActivity) {
-                                    messages.append(((SchoolActivity) activity).toString() + "\n");
-                                } else if (activity instanceof OtherActivity) {
-                                    messages.append(((OtherActivity) activity).toString() + "\n");
-                                }
+                                messages.append(activity + "\n");
                             }
                         } else {
                             messages.append("No activities found.\n");
@@ -639,8 +673,9 @@ public class MainWindow extends JFrame {
      * Starts the DayPlanner application.
      *
      * @param args command-line arguments
+     * @throws InvalidTimeException if a time read from file or activity is invalid
      */
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InvalidTimeException {
         if (args.length > 0) {
             MainWindow window = new MainWindow(args[0]);
             window.setVisible(true);

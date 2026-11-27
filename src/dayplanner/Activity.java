@@ -21,12 +21,17 @@ public abstract class Activity {
      * @param comment      A short description of the activity
      * 
      * @throws InvalidActivityException if a required field is invalid
+     * @throws InvalidTimeException     if a time field is invalid
      */
-    public Activity(String title, Time startingTime, Time endingTime, String comment) throws InvalidActivityException {
+    public Activity(String title, Time startingTime, Time endingTime, String comment)
+            throws InvalidActivityException, InvalidTimeException {
         setTitle(title);
         setStartingTime(startingTime);
         setEndingTime(endingTime);
         setComment(comment);
+        if (this.startingTime.compareTo(this.endingTime) >= 0) {
+            throw new InvalidActivityException("Starting time must be before ending time.");
+        }
     }
 
     /**
@@ -35,10 +40,13 @@ public abstract class Activity {
      * @param otherActivity the activity to copy
      * 
      * @throws InvalidActivityException if the source has invalid fields
+     * @throws InvalidTimeException     if a copied time is invalid
      */
-    public Activity(Activity otherActivity) throws InvalidActivityException {
+    public Activity(Activity otherActivity) throws InvalidActivityException, InvalidTimeException {
         if (otherActivity == null) {
             throw new InvalidActivityException("Activity object cannot be null");
+        } else if (otherActivity.startingTime.compareTo(otherActivity.endingTime) >= 0) {
+            throw new InvalidActivityException("Starting time must be before ending time.");
         }
         setTitle(otherActivity.title);
         setStartingTime(new Time(otherActivity.startingTime));
@@ -69,8 +77,9 @@ public abstract class Activity {
      * Returns a copy of the starting time.
      *
      * @return a copy of the starting time
+     * @throws InvalidTimeException if the starting time is invalid
      */
-    public Time getStartingTime() {
+    public Time getStartingTime() throws InvalidTimeException {
         return new Time(this.startingTime);
     }
 
@@ -78,8 +87,9 @@ public abstract class Activity {
      * Returns a copy of the ending time.
      *
      * @return a copy of the ending time
+     * @throws InvalidTimeException if the ending time is invalid
      */
-    public Time getEndingTime() {
+    public Time getEndingTime() throws InvalidTimeException {
         return new Time(this.endingTime);
     }
 
@@ -112,12 +122,13 @@ public abstract class Activity {
      * @param time the starting time to store
      * 
      * @throws InvalidActivityException if the starting time is null
+     * @throws InvalidTimeException     if the starting time is invalid
      */
-    public void setStartingTime(Time time) throws InvalidActivityException {
+    public void setStartingTime(Time time) throws InvalidActivityException, InvalidTimeException {
         if (time == null) {
             throw new InvalidActivityException("Starting time cannot be empty.");
         }
-        this.startingTime = time;
+        this.startingTime = new Time(time);
     }
 
     /**
@@ -126,12 +137,13 @@ public abstract class Activity {
      * @param time the ending time to store
      * 
      * @throws InvalidActivityException if the ending time is null
+     * @throws InvalidTimeException     if the ending time is invalid
      */
-    public void setEndingTime(Time time) throws InvalidActivityException {
+    public void setEndingTime(Time time) throws InvalidActivityException, InvalidTimeException {
         if (time == null) {
             throw new InvalidActivityException("Ending time cannot be empty.");
         }
-        this.endingTime = time;
+        this.endingTime = new Time(time);
     }
 
     /**
@@ -155,6 +167,11 @@ public abstract class Activity {
         return "%s, %s, %s, %s".formatted(this.title, this.startingTime, this.endingTime, this.comment);
     }
 
+    /**
+     * @param other the object to compare
+     * 
+     * @return true if the objects represent the same activity
+     */
     @Override
     public boolean equals(Object other) {
         if (this == other) {
@@ -167,10 +184,14 @@ public abstract class Activity {
 
         Activity otherActivity = (Activity) other;
 
-        return getTitle().equals(otherActivity.getTitle())
-                && getStartingTime().equals(otherActivity.getStartingTime())
-                && getEndingTime().equals(otherActivity.getEndingTime())
-                && getComment().equals(otherActivity.getComment());
+        try {
+            return getTitle().equals(otherActivity.getTitle())
+                    && getStartingTime().equals(otherActivity.getStartingTime())
+                    && getEndingTime().equals(otherActivity.getEndingTime())
+                    && getComment().equals(otherActivity.getComment());
+        } catch (InvalidTimeException e) {
+            return false;
+        }
     }
 
     /**
@@ -216,7 +237,7 @@ public abstract class Activity {
      *                          with
      * @return true if the activity falls within both supplied time bounds
      */
-    public boolean fitsTimeCondition(Time otherStartingTime, Time otherEndingTime) {
+    public boolean fitsTimeCondition(Time otherStartingTime, Time otherEndingTime) throws InvalidTimeException {
         // If the other starting time is null (i.e. the user did not input anything for
         // the starting time), or the input is not null and the starting time in this
         // object comes after the other starting time, set to true, otherwise false

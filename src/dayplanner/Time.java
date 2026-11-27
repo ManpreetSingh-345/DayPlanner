@@ -19,13 +19,14 @@ public class Time implements Comparable<Time> {
      * @param day    The day of the time to store
      * @param hour   The hour of the time to store
      * @param minute The minute of the time to store
+     * @throws InvalidTimeException if any time field is invalid
      */
-    public Time(int year, int month, int day, int hour, int minute) {
-        this.year = year;
-        this.month = month;
-        this.day = day;
-        this.hour = hour;
-        this.minute = minute;
+    public Time(int year, int month, int day, int hour, int minute) throws InvalidTimeException {
+        setYear(year);
+        setMonth(month);
+        setDay(day);
+        setHour(hour);
+        setMinute(minute);
     }
 
     /**
@@ -33,21 +34,18 @@ public class Time implements Comparable<Time> {
      * the same type
      * 
      * @param otherTime The Time object to 'inherit' from
+     * @throws InvalidTimeException if otherTime is null or contains an invalid
+     *                              field
      */
-    public Time(Time otherTime) {
+    public Time(Time otherTime) throws InvalidTimeException {
         if (otherTime == null) {
-            this.year = -1;
-            this.month = -1;
-            this.day = -1;
-            this.hour = -1;
-            this.minute = -1;
-            return;
+            throw new InvalidTimeException("The caller must pass in a non-null Time object.");
         }
-        this.year = otherTime.year;
-        this.month = otherTime.month;
-        this.day = otherTime.day;
-        this.hour = otherTime.hour;
-        this.minute = otherTime.minute;
+        setYear(otherTime.year);
+        setMonth(otherTime.month);
+        setDay(otherTime.day);
+        setHour(otherTime.hour);
+        setMinute(otherTime.minute);
     }
 
     /**
@@ -110,8 +108,12 @@ public class Time implements Comparable<Time> {
      * Stores the year.
      *
      * @param year the year to store
+     * @throws InvalidTimeException if the year is not positive
      */
-    public void setYear(int year) {
+    public void setYear(int year) throws InvalidTimeException {
+        if (year <= 0) {
+            throw new InvalidTimeException("Invalid year input.");
+        }
         this.year = year;
     }
 
@@ -119,8 +121,12 @@ public class Time implements Comparable<Time> {
      * Stores the month.
      *
      * @param month the month to store
+     * @throws InvalidTimeException if the month is outside the range 1 through 12
      */
-    public void setMonth(int month) {
+    public void setMonth(int month) throws InvalidTimeException {
+        if (month <= 0 || month > 12) {
+            throw new InvalidTimeException("Invalid month input. Month must be between 1 and 12");
+        }
         this.month = month;
     }
 
@@ -128,8 +134,12 @@ public class Time implements Comparable<Time> {
      * Stores the day.
      *
      * @param day the day to store
+     * @throws InvalidTimeException if the day is outside the range 1 through 31
      */
-    public void setDay(int day) {
+    public void setDay(int day) throws InvalidTimeException {
+        if (day <= 0 || day > 31) {
+            throw new InvalidTimeException("Invalid day input. Day must be between 1 and 31");
+        }
         this.day = day;
     }
 
@@ -137,8 +147,12 @@ public class Time implements Comparable<Time> {
      * Stores the hour.
      *
      * @param hour the hour to store
+     * @throws InvalidTimeException if the hour is outside the range 0 through 23
      */
-    public void setHour(int hour) {
+    public void setHour(int hour) throws InvalidTimeException {
+        if (hour < 0 || hour > 23) {
+            throw new InvalidTimeException("Invalid hour input. Hour must be between 0 and 23");
+        }
         this.hour = hour;
     }
 
@@ -146,8 +160,12 @@ public class Time implements Comparable<Time> {
      * Stores the minute.
      *
      * @param minute the minute to store
+     * @throws InvalidTimeException if the minute is outside the range 0 through 59
      */
-    public void setMinute(int minute) {
+    public void setMinute(int minute) throws InvalidTimeException {
+        if (minute < 0 || minute > 59) {
+            throw new InvalidTimeException("Invalid minute input. Minute must be between 1 and 59");
+        }
         this.minute = minute;
     }
 
@@ -164,7 +182,7 @@ public class Time implements Comparable<Time> {
      * 
      * Tests whether two Time objects contain the same values.
      *
-     * @param otherTime The Time object to compare against
+     * @param other The object to compare against
      * @return true if the calling object is equivalent to the specified object,
      *         false otherwise
      */
@@ -189,6 +207,8 @@ public class Time implements Comparable<Time> {
      * @return A negative integer if this time is earlier than the specified time,
      *         zero if they're equal, and postiive if this time is later than the
      *         specified time
+     * @throws NullPointerException if otherTime is null
+     * @throws ClassCastException   if otherTime is not a Time object
      */
     @Override
     public int compareTo(Time otherTime) throws NullPointerException, ClassCastException {
@@ -222,8 +242,9 @@ public class Time implements Comparable<Time> {
      * 
      * @return A Time object containing the attributes specified within the Time
      *         string. If the inputs aren't valid, the method returns null.
+     * @throws InvalidTimeException if a parsed time field is invalid
      */
-    public static Time getTimeFromString(String timeString) {
+    public static Time getTimeFromString(String timeString) throws InvalidTimeException {
         if (timeString == null)
             return null;
         String[] timeArray = timeString.split(", ");
@@ -248,17 +269,23 @@ public class Time implements Comparable<Time> {
      * @return true if this Time object is valid, which means it falls under the
      *         Gregorian Calendar, false otherwise
      */
-    public boolean isValid() {
+    public boolean isValid() throws InvalidTimeException {
         // The months April, June, September, and November have 30 days in them
         if ((this.month == 4 || this.month == 6 || this.month == 9 || this.month == 11)
                 && this.day > 30)
-            return false;
+            throw new InvalidTimeException(
+                    "Invalid month + day input. The months April, June, September, and November have 30 days in them");
         // February has 29 days on leap years, and 28 days otherwise
         else if (this.month == 2 && ((this.day == 29 && !validateLeapYear()) || this.day >= 30))
-            return false;
+            throw new InvalidTimeException(
+                    "Invalid input for February. Make sure the date is valid under the Gregorian Calendar.");
         // General case
-        return this.year > 0 && this.month < 13 && this.month > 0 && this.day < 32 && this.day > 0 && this.hour < 24
-                && this.hour > -1 && this.minute < 60 && this.minute > -1;
+        else if (!(this.year > 0 && this.month < 13 && this.month > 0 && this.day < 32 && this.day > 0 && this.hour < 24
+                && this.hour > -1 && this.minute < 60 && this.minute > -1)) {
+            throw new InvalidTimeException(
+                    "Invalid input for times. Make sure the date is valid under the Gregorian Calendar.");
+        }
+        return true;
     }
 
     /**
