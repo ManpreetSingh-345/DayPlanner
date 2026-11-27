@@ -527,7 +527,6 @@ public class MainWindow extends JFrame {
             if (comp instanceof JButton && comp.getName().equals("Reset")) {
                 JButton resetButton = (JButton) comp;
                 resetButton.addActionListener(e -> {
-                    typeDropdown.setSelectedIndex(0);
                     titleInput.setText("");
                     startingTimeInput.setText("");
                     endingTimeInput.setText("");

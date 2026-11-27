@@ -164,7 +164,7 @@ public class Time implements Comparable<Time> {
      */
     public void setMinute(int minute) throws InvalidTimeException {
         if (minute < 0 || minute > 59) {
-            throw new InvalidTimeException("Invalid minute input. Minute must be between 1 and 59");
+            throw new InvalidTimeException("Invalid minute input. Minute must be between 0 and 59");
         }
         this.minute = minute;
     }
@@ -186,6 +186,7 @@ public class Time implements Comparable<Time> {
      * @return true if the calling object is equivalent to the specified object,
      *         false otherwise
      */
+    @Override
     public boolean equals(Object other) {
         if (this == other) {
             return true;
