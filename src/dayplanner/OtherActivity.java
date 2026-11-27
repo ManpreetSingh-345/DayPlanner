@@ -93,18 +93,7 @@ public class OtherActivity extends Activity {
      */
     @Override
     public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof OtherActivity)) {
-            return false;
-        }
-
-        OtherActivity otherActivity = (OtherActivity) other;
-        return getTitle().equals(otherActivity.getTitle())
-                && getStartingTime().equals(otherActivity.getStartingTime())
-                && getEndingTime().equals(otherActivity.getEndingTime())
-                && getComment().equals(otherActivity.getComment())
-                && location.equals(otherActivity.location);
+        return super.equals(other)
+                && getLocation().equals(((OtherActivity) other).getLocation());
     }
 }

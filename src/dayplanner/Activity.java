@@ -161,7 +161,7 @@ public abstract class Activity {
             return true;
         }
 
-        if (!(other instanceof Activity)) {
+        if (other == null || getClass() != other.getClass()) {
             return false;
         }
 

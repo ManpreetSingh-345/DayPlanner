@@ -54,25 +54,4 @@ public class SchoolActivity extends Activity {
         return "school: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
                 this.getEndingTime().toString(), this.getComment());
     }
-
-    /**
-     * @param other the object to compare
-     * 
-     * @return true if the objects represent the same school activity
-     */
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof SchoolActivity)) {
-            return false;
-        }
-
-        SchoolActivity otherActivity = (SchoolActivity) other;
-        return getTitle().equals(otherActivity.getTitle())
-                && getStartingTime().equals(otherActivity.getStartingTime())
-                && getEndingTime().equals(otherActivity.getEndingTime())
-                && getComment().equals(otherActivity.getComment());
-    }
 }

@@ -54,25 +54,4 @@ public class HomeActivity extends Activity {
         return "home: %s, %s, %s, %s".formatted(this.getTitle(), this.getStartingTime().toString(),
                 this.getEndingTime().toString(), this.getComment());
     }
-
-    /**
-     * @param other the object to compare
-     * 
-     * @return true if the objects represent the same home activity
-     */
-    @Override
-    public boolean equals(Object other) {
-        if (this == other) {
-            return true;
-        }
-        if (!(other instanceof HomeActivity)) {
-            return false;
-        }
-
-        HomeActivity otherActivity = (HomeActivity) other;
-        return getTitle().equals(otherActivity.getTitle())
-                && getStartingTime().equals(otherActivity.getStartingTime())
-                && getEndingTime().equals(otherActivity.getEndingTime())
-                && getComment().equals(otherActivity.getComment());
-    }
 }

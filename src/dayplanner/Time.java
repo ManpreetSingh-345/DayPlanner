@@ -168,9 +168,16 @@ public class Time implements Comparable<Time> {
      * @return true if the calling object is equivalent to the specified object,
      *         false otherwise
      */
-    public boolean equals(Time otherTime) {
-        if (otherTime == null)
+    public boolean equals(Object other) {
+        if (this == other) {
+            return true;
+        }
+
+        else if (other == null || getClass() != other.getClass()) {
             return false;
+        }
+
+        Time otherTime = (Time) other;
         return this.year == otherTime.year && this.month == otherTime.month && this.day == otherTime.day
                 && this.hour == otherTime.hour && this.minute == otherTime.minute;
     }
